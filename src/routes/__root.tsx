@@ -1,7 +1,9 @@
 /// <reference types="vite-plus/client" />
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+
+import { AppShellLayout } from "../components/AppShellLayout";
 
 import appCss from "../styles.css?url";
 import mantineCss from "@mantine/core/styles.css?url";
@@ -17,7 +19,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf8" },
       { content: "width=device-width, initial-scale=1", name: "viewport" },
-      { title: "TanStack Start Start" },
+      { title: "SQLite Lab" },
     ],
   }),
   notFoundComponent: NotFoundComponent,
@@ -33,7 +35,7 @@ function RootComponent() {
       </head>
       <body>
         <MantineProvider>
-          <Outlet />
+          <AppShellLayout />
         </MantineProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
