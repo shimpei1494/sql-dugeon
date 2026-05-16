@@ -1,8 +1,9 @@
 import { Badge, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 
+import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
+import { QueryResultPanel } from "./QueryResultPanel";
 import { SchemaExplorer } from "./SchemaExplorer";
 import { SqlEditor } from "./SqlEditor";
 
@@ -12,7 +13,7 @@ type LessonWorkspaceProps = {
 
 export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
   const { lesson, seedVersion } = payload;
-  const [sql, setSql] = useState(lesson.starterSql);
+  const { executionResult, isRunning, resetSql, runSql, setSql, sql } = useLessonSqlRunner(lesson);
 
   return (
     <Stack gap="xl">
@@ -59,10 +60,18 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
             <Title order={2} size="h3">
               SQL
             </Title>
-            <SqlEditor value={sql} onChange={setSql} onReset={() => setSql(lesson.starterSql)} />
+            <SqlEditor
+              value={sql}
+              onChange={setSql}
+              onReset={resetSql}
+              onRun={runSql}
+              isRunning={isRunning}
+            />
           </Stack>
         </Paper>
       </SimpleGrid>
+
+      <QueryResultPanel executionResult={executionResult} />
 
       <Paper withBorder p="lg" radius="md">
         <Stack gap="sm">

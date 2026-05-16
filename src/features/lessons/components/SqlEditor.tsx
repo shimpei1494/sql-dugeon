@@ -4,9 +4,11 @@ type SqlEditorProps = {
   value: string;
   onChange: (value: string) => void;
   onReset: () => void;
+  onRun: () => void;
+  isRunning: boolean;
 };
 
-export function SqlEditor({ value, onChange, onReset }: SqlEditorProps) {
+export function SqlEditor({ value, onChange, onReset, onRun, isRunning }: SqlEditorProps) {
   return (
     <>
       <Textarea
@@ -21,7 +23,9 @@ export function SqlEditor({ value, onChange, onReset }: SqlEditorProps) {
         <Button variant="default" onClick={onReset}>
           SQL をリセット
         </Button>
-        <Button disabled>実行は次のフェーズで追加</Button>
+        <Button onClick={onRun} loading={isRunning}>
+          SQL を実行
+        </Button>
       </Group>
     </>
   );
