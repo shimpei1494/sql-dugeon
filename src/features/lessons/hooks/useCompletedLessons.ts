@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import * as v from "valibot";
 
 const completedLessonsStorageKey = "sql-dungeon:completed-lessons";
 const lastOpenedLessonStorageKey = "sql-dungeon:last-opened-lesson";
 const lessonProgressChangedEvent = "sql-dungeon:lesson-progress-changed";
+const completedLessonIdsSchema = v.array(v.string());
+const lastOpenedLessonIdSchema = v.pipe(v.string(), v.nonEmpty());
 
 type LessonProgress = {
   completedLessonIds: Set<string>;
@@ -31,12 +34,13 @@ function readCompletedLessonIds(): Set<string> {
   try {
     const value = storage.getItem(completedLessonsStorageKey);
     const parsedValue: unknown = value ? JSON.parse(value) : [];
+    const result = v.safeParse(completedLessonIdsSchema, parsedValue);
 
-    if (!Array.isArray(parsedValue)) {
+    if (!result.success) {
       return new Set();
     }
 
-    return new Set(parsedValue.filter((item): item is string => typeof item === "string"));
+    return new Set(result.output);
   } catch {
     return new Set();
   }
@@ -49,8 +53,8 @@ function readLastOpenedLessonId(): string | undefined {
     return undefined;
   }
 
-  const lessonId = storage.getItem(lastOpenedLessonStorageKey);
-  return lessonId || undefined;
+  const result = v.safeParse(lastOpenedLessonIdSchema, storage.getItem(lastOpenedLessonStorageKey));
+  return result.success ? result.output : undefined;
 }
 
 function readLessonProgress(): LessonProgress {

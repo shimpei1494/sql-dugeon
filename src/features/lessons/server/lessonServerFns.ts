@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import * as v from "valibot";
 
 import { getChapters, getLessonPayload, getLessonSummaries } from "./lessonRepository";
+
+const lessonIdSchema = v.pipe(v.string(), v.nonEmpty());
 
 export const getLessonCatalog = createServerFn({ method: "GET" }).handler(async () => ({
   chapters: getChapters(),
@@ -8,7 +11,7 @@ export const getLessonCatalog = createServerFn({ method: "GET" }).handler(async 
 }));
 
 export const getLessonDetail = createServerFn({ method: "GET" })
-  .inputValidator((lessonId: string) => lessonId)
+  .inputValidator(v.parser(lessonIdSchema))
   .handler(async ({ data: lessonId }) => {
     const payload = getLessonPayload(lessonId);
 

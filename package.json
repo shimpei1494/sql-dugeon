@@ -18,9 +18,11 @@
     "@mantine/hooks": "^9.2.1",
     "@tanstack/react-router": "^1.169.2",
     "@tanstack/react-start": "^1.167.65",
+    "@tanstack/valibot-adapter": "^1.167.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "sql.js": "^1.14.1"
+    "sql.js": "^1.14.1",
+    "valibot": "^1.4.0"
   },
   "devDependencies": {
     "@rolldown/plugin-babel": "^0.2.3",

@@ -1,5 +1,7 @@
 import { Button, Container, Group, NativeSelect, Paper, Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
+import { valibotValidator } from "@tanstack/valibot-adapter";
+import * as v from "valibot";
 
 import { PageHeader } from "../../components/PageHeader";
 import { LessonList } from "../../features/lessons/components/LessonList";
@@ -7,38 +9,37 @@ import { useCompletedLessons } from "../../features/lessons/hooks/useCompletedLe
 import { getLessonCatalog } from "../../features/lessons/server/lessonServerFns";
 import type { Chapter, LessonSummary } from "../../features/lessons/types";
 
-type LessonsSearch = {
-  chapter?: string;
-  difficulty?: LessonSummary["difficulty"];
-  status?: "completed" | "incomplete";
-};
+const chapterSearchParamSchema = v.fallback(
+  v.optional(v.pipe(v.string(), v.nonEmpty())),
+  undefined,
+);
+const difficultySearchParamSchema = v.fallback(
+  v.optional(v.picklist(["beginner", "intermediate", "advanced"])),
+  undefined,
+);
+const statusSearchParamSchema = v.fallback(
+  v.optional(v.picklist(["completed", "incomplete"])),
+  undefined,
+);
 
-function parseStringSearchParam(value: unknown) {
-  return typeof value === "string" && value.length > 0 ? value : undefined;
+const lessonsSearchSchema = v.object({
+  chapter: chapterSearchParamSchema,
+  difficulty: difficultySearchParamSchema,
+  status: statusSearchParamSchema,
+});
+
+type LessonsSearch = v.InferOutput<typeof lessonsSearchSchema>;
+
+function parseDifficultySearchParam(value: string): LessonsSearch["difficulty"] {
+  return v.parse(difficultySearchParamSchema, value);
 }
 
-function parseDifficulty(value: unknown): LessonsSearch["difficulty"] {
-  if (value === "beginner" || value === "intermediate" || value === "advanced") {
-    return value;
-  }
-
-  return undefined;
-}
-
-function parseStatus(value: unknown): LessonsSearch["status"] {
-  if (value === "completed" || value === "incomplete") {
-    return value;
-  }
-
-  return undefined;
+function parseStatusSearchParam(value: string): LessonsSearch["status"] {
+  return v.parse(statusSearchParamSchema, value);
 }
 
 export const Route = createFileRoute("/lessons/")({
-  validateSearch: (search: Record<string, unknown>): LessonsSearch => ({
-    chapter: parseStringSearchParam(search.chapter),
-    difficulty: parseDifficulty(search.difficulty),
-    status: parseStatus(search.status),
-  }),
+  validateSearch: valibotValidator(lessonsSearchSchema),
   loader: () => getLessonCatalog(),
   component: LessonsPage,
 });
@@ -76,7 +77,7 @@ function LessonFilters({ chapters, search, onChange }: LessonFiltersProps) {
           onChange={(event) => {
             onChange({
               ...search,
-              difficulty: parseDifficulty(event.currentTarget.value),
+              difficulty: parseDifficultySearchParam(event.currentTarget.value),
             });
           }}
           data={[
@@ -92,7 +93,7 @@ function LessonFilters({ chapters, search, onChange }: LessonFiltersProps) {
           onChange={(event) => {
             onChange({
               ...search,
-              status: parseStatus(event.currentTarget.value),
+              status: parseStatusSearchParam(event.currentTarget.value),
             });
           }}
           data={[
