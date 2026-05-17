@@ -1,7 +1,8 @@
 import { Badge, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 
-import { useCompletedLessons } from "../hooks/useCompletedLessons";
+import { markLessonOpened, useCompletedLessons } from "../hooks/useCompletedLessons";
 import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
 import { GradingPanel } from "./GradingPanel";
@@ -19,6 +20,10 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
   const { executionResult, gradingResult, isRunning, resetSql, runSql, setSql, sql } =
     useLessonSqlRunner(lesson);
   const isCompleted = completedLessonIds.has(lesson.id);
+
+  useEffect(() => {
+    markLessonOpened(lesson.id);
+  }, [lesson.id]);
 
   return (
     <Stack gap="xl">

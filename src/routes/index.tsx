@@ -1,11 +1,20 @@
 import { Badge, Button, Container, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { ContinueLessonAction } from "../features/lessons/components/ContinueLessonAction";
+import { useLessonProgress } from "../features/lessons/hooks/useCompletedLessons";
+import { getLessonCatalog } from "../features/lessons/server/lessonServerFns";
+
 export const Route = createFileRoute("/")({
+  loader: () => getLessonCatalog(),
   component: Home,
 });
 
 function Home() {
+  const { lessons } = Route.useLoaderData();
+  const { lastOpenedLessonId } = useLessonProgress();
+  const lastOpenedLesson = lessons.find((lesson) => lesson.id === lastOpenedLessonId);
+
   return (
     <Container size="xl" py={64}>
       <Stack gap={48}>
@@ -24,7 +33,13 @@ function Home() {
             <Button component={Link} to="/lessons" size="md">
               Lesson を始める
             </Button>
+            {lastOpenedLesson ? <ContinueLessonAction lesson={lastOpenedLesson} /> : null}
           </Group>
+          {lastOpenedLesson ? (
+            <Text size="sm" c="dimmed">
+              前回: {lastOpenedLesson.title}
+            </Text>
+          ) : null}
         </Stack>
 
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">

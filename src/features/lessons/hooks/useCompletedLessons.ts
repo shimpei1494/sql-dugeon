@@ -1,15 +1,35 @@
 import { useEffect, useState } from "react";
 
 const completedLessonsStorageKey = "sql-dungeon:completed-lessons";
-const completedLessonsChangedEvent = "sql-dungeon:completed-lessons-changed";
+const lastOpenedLessonStorageKey = "sql-dungeon:last-opened-lesson";
+const lessonProgressChangedEvent = "sql-dungeon:lesson-progress-changed";
+
+type LessonProgress = {
+  completedLessonIds: Set<string>;
+  lastOpenedLessonId?: string;
+};
+
+function getLocalStorage(): Storage | undefined {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  try {
+    return window.localStorage ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function readCompletedLessonIds(): Set<string> {
-  if (typeof window === "undefined") {
+  const storage = getLocalStorage();
+
+  if (!storage) {
     return new Set();
   }
 
   try {
-    const value = window.localStorage.getItem(completedLessonsStorageKey);
+    const value = storage.getItem(completedLessonsStorageKey);
     const parsedValue: unknown = value ? JSON.parse(value) : [];
 
     if (!Array.isArray(parsedValue)) {
@@ -22,16 +42,41 @@ function readCompletedLessonIds(): Set<string> {
   }
 }
 
-function writeCompletedLessonIds(lessonIds: Set<string>) {
+function readLastOpenedLessonId(): string | undefined {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return undefined;
+  }
+
+  const lessonId = storage.getItem(lastOpenedLessonStorageKey);
+  return lessonId || undefined;
+}
+
+function readLessonProgress(): LessonProgress {
+  return {
+    completedLessonIds: readCompletedLessonIds(),
+    lastOpenedLessonId: readLastOpenedLessonId(),
+  };
+}
+
+function notifyLessonProgressChanged() {
   if (typeof window === "undefined") {
     return;
   }
 
-  window.localStorage.setItem(
-    completedLessonsStorageKey,
-    JSON.stringify(Array.from(lessonIds).sort()),
-  );
-  window.dispatchEvent(new Event(completedLessonsChangedEvent));
+  window.dispatchEvent(new Event(lessonProgressChangedEvent));
+}
+
+function writeCompletedLessonIds(lessonIds: Set<string>) {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return;
+  }
+
+  storage.setItem(completedLessonsStorageKey, JSON.stringify(Array.from(lessonIds).sort()));
+  notifyLessonProgressChanged();
 }
 
 export function markLessonCompleted(lessonId: string) {
@@ -40,23 +85,40 @@ export function markLessonCompleted(lessonId: string) {
   writeCompletedLessonIds(lessonIds);
 }
 
-export function useCompletedLessons() {
-  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(() => new Set());
+export function markLessonOpened(lessonId: string) {
+  const storage = getLocalStorage();
+
+  if (!storage) {
+    return;
+  }
+
+  storage.setItem(lastOpenedLessonStorageKey, lessonId);
+  notifyLessonProgressChanged();
+}
+
+export function useLessonProgress() {
+  const [lessonProgress, setLessonProgress] = useState<LessonProgress>(() => ({
+    completedLessonIds: new Set(),
+  }));
 
   useEffect(() => {
-    const syncCompletedLessonIds = () => {
-      setCompletedLessonIds(readCompletedLessonIds());
+    const syncLessonProgress = () => {
+      setLessonProgress(readLessonProgress());
     };
 
-    syncCompletedLessonIds();
-    window.addEventListener("storage", syncCompletedLessonIds);
-    window.addEventListener(completedLessonsChangedEvent, syncCompletedLessonIds);
+    syncLessonProgress();
+    window.addEventListener("storage", syncLessonProgress);
+    window.addEventListener(lessonProgressChangedEvent, syncLessonProgress);
 
     return () => {
-      window.removeEventListener("storage", syncCompletedLessonIds);
-      window.removeEventListener(completedLessonsChangedEvent, syncCompletedLessonIds);
+      window.removeEventListener("storage", syncLessonProgress);
+      window.removeEventListener(lessonProgressChangedEvent, syncLessonProgress);
     };
   }, []);
 
-  return completedLessonIds;
+  return lessonProgress;
+}
+
+export function useCompletedLessons() {
+  return useLessonProgress().completedLessonIds;
 }
