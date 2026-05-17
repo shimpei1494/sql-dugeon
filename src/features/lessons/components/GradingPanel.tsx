@@ -1,13 +1,17 @@
-import { Alert, Paper, Stack, Text, Title } from "@mantine/core";
+import { Alert, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 
 import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
+import type { LessonSummary } from "../types";
 
 type GradingPanelProps = {
   gradingResult?: QueryResultComparison;
   isCompleted: boolean;
+  nextLesson?: LessonSummary;
 };
 
-export function GradingPanel({ gradingResult, isCompleted }: GradingPanelProps) {
+export function GradingPanel({ gradingResult, isCompleted, nextLesson }: GradingPanelProps) {
+  const isSolved = isCompleted || gradingResult?.ok === true;
+
   return (
     <Paper withBorder p="lg" radius="md">
       <Stack gap="md">
@@ -33,6 +37,18 @@ export function GradingPanel({ gradingResult, isCompleted }: GradingPanelProps) 
             SQL を実行すると期待結果と比較して採点します。
           </Text>
         )}
+        {isSolved ? (
+          <Group>
+            {nextLesson ? (
+              <Button component="a" href={`/lessons/${nextLesson.id}`}>
+                次の Lesson へ
+              </Button>
+            ) : null}
+            <Button component="a" href="/lessons" variant={nextLesson ? "default" : "filled"}>
+              一覧へ戻る
+            </Button>
+          </Group>
+        ) : null}
       </Stack>
     </Paper>
   );

@@ -64,5 +64,6 @@ export const lessonSchema = v.object({
 
 export const lessonPayloadSchema = v.object({
   lesson: lessonSchema,
+  nextLesson: v.optional(lessonSummarySchema),
   seedVersion: requiredStringSchema,
 });

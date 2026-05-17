@@ -17,7 +17,7 @@ type LessonWorkspaceProps = {
 };
 
 export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
-  const { lesson, seedVersion } = payload;
+  const { lesson, nextLesson, seedVersion } = payload;
   const completedLessonIds = useCompletedLessons();
   const { executionResult, gradingResult, isRunning, resetSql, runSql, setSql, sql } =
     useLessonSqlRunner(lesson);
@@ -88,7 +88,11 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
         expectedResult={lesson.expectedResult}
       />
       <QueryResultPanel executionResult={executionResult} />
-      <GradingPanel gradingResult={gradingResult} isCompleted={isCompleted} />
+      <GradingPanel
+        gradingResult={gradingResult}
+        isCompleted={isCompleted}
+        nextLesson={nextLesson}
+      />
 
       <LessonSupportPanel
         key={lesson.id}

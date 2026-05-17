@@ -89,6 +89,26 @@ function sortChaptersByOrder(rows: Chapter[]) {
   return sortedRows;
 }
 
+function sortLessonsByChapterOrder(rows: Lesson[]) {
+  const chapterOrderById = new Map(chapters.map((chapter) => [chapter.id, chapter.order]));
+  const lessonIndexById = new Map(rows.map((lesson, index) => [lesson.id, index]));
+  const sortedRows = Array.from(rows);
+
+  sortedRows.sort((a, b) => {
+    const chapterOrderDiff =
+      (chapterOrderById.get(a.chapterId) ?? Number.MAX_SAFE_INTEGER) -
+      (chapterOrderById.get(b.chapterId) ?? Number.MAX_SAFE_INTEGER);
+
+    if (chapterOrderDiff !== 0) {
+      return chapterOrderDiff;
+    }
+
+    return (lessonIndexById.get(a.id) ?? 0) - (lessonIndexById.get(b.id) ?? 0);
+  });
+
+  return sortedRows;
+}
+
 const customersTable = {
   name: "customers",
   columns: [
@@ -389,15 +409,26 @@ const rawLessons: Lesson[] = [
 ];
 
 const lessons = v.parse(v.array(lessonSchema), rawLessons);
+const orderedLessons = sortLessonsByChapterOrder(lessons);
 
 const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
+const nextLessonById = new Map<string, Lesson>();
+
+for (let index = 0; index < orderedLessons.length - 1; index += 1) {
+  const lesson = orderedLessons[index];
+  const nextLesson = orderedLessons[index + 1];
+
+  if (lesson && nextLesson) {
+    nextLessonById.set(lesson.id, nextLesson);
+  }
+}
 
 export function getChapters(): Chapter[] {
   return sortChaptersByOrder(chapters);
 }
 
 export function getLessonSummaries(): LessonSummary[] {
-  return lessons.map(
+  return orderedLessons.map(
     ({
       schema: _schema,
       starterSql: _starterSql,
@@ -422,6 +453,7 @@ export function getLessonPayload(lessonId: string): LessonPayload | undefined {
 
   return {
     lesson,
+    nextLesson: nextLessonById.get(lessonId),
     seedVersion,
   };
 }
