@@ -23,10 +23,24 @@ function getDifficultyColor(difficulty: LessonSummary["difficulty"]) {
 export function LessonList({ chapters, lessons }: LessonListProps) {
   const completedLessonIds = useCompletedLessons();
 
+  if (lessons.length === 0) {
+    return (
+      <Paper withBorder p="lg" radius="md">
+        <Text size="sm" c="dimmed">
+          条件に一致する Lesson はありません。
+        </Text>
+      </Paper>
+    );
+  }
+
   return (
     <Stack gap="xl">
       {chapters.map((chapter) => {
         const chapterLessons = lessons.filter((lesson) => lesson.chapterId === chapter.id);
+
+        if (chapterLessons.length === 0) {
+          return null;
+        }
 
         return (
           <Stack key={chapter.id} gap="md">
