@@ -1,8 +1,11 @@
+import * as v from "valibot";
+
+import { chapterSchema, lessonSchema } from "../lessonSchemas";
 import type { Chapter, Lesson, LessonPayload, LessonSummary } from "../types";
 
 const seedVersion = "2026-05-15.phase-1";
 
-const chapters: Chapter[] = [
+const rawChapters: Chapter[] = [
   {
     id: "select-basics",
     title: "SELECT 基礎",
@@ -16,6 +19,8 @@ const chapters: Chapter[] = [
     order: 2,
   },
 ];
+
+const chapters = v.parse(v.array(chapterSchema), rawChapters);
 
 const customerRows = [
   { id: 1, name: "Aoi Tanaka", email: "aoi@example.com", age: 24, city: "Tokyo" },
@@ -67,7 +72,7 @@ const ordersTable = {
   rows: orderRows,
 } satisfies Lesson["schema"][number];
 
-const lessons: Lesson[] = [
+const rawLessons: Lesson[] = [
   {
     id: "select-all-customers",
     chapterId: "select-basics",
@@ -141,6 +146,8 @@ const lessons: Lesson[] = [
     explanation: "ORDER BY は結果の並び順を指定します。DESC は降順、ASC は昇順です。",
   },
 ];
+
+const lessons = v.parse(v.array(lessonSchema), rawLessons);
 
 const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
 
