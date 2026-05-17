@@ -1,8 +1,10 @@
 import { Badge, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
+import { useCompletedLessons } from "../hooks/useCompletedLessons";
 import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
+import { GradingPanel } from "./GradingPanel";
 import { QueryResultPanel } from "./QueryResultPanel";
 import { SchemaExplorer } from "./SchemaExplorer";
 import { SqlEditor } from "./SqlEditor";
@@ -13,7 +15,10 @@ type LessonWorkspaceProps = {
 
 export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
   const { lesson, seedVersion } = payload;
-  const { executionResult, isRunning, resetSql, runSql, setSql, sql } = useLessonSqlRunner(lesson);
+  const completedLessonIds = useCompletedLessons();
+  const { executionResult, gradingResult, isRunning, resetSql, runSql, setSql, sql } =
+    useLessonSqlRunner(lesson);
+  const isCompleted = completedLessonIds.has(lesson.id);
 
   return (
     <Stack gap="xl">
@@ -72,6 +77,7 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
       </SimpleGrid>
 
       <QueryResultPanel executionResult={executionResult} />
+      <GradingPanel gradingResult={gradingResult} isCompleted={isCompleted} />
 
       <Paper withBorder p="lg" radius="md">
         <Stack gap="sm">
