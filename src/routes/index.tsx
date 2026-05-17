@@ -2,6 +2,7 @@ import { Badge, Button, Container, Group, SimpleGrid, Stack, Text, Title } from 
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { ContinueLessonAction } from "../features/lessons/components/ContinueLessonAction";
+import { LearningProgressPanel } from "../features/lessons/components/LearningProgressPanel";
 import { useLessonProgress } from "../features/lessons/hooks/useCompletedLessons";
 import { getLessonCatalog } from "../features/lessons/server/lessonServerFns";
 
@@ -11,8 +12,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { lessons } = Route.useLoaderData();
-  const { lastOpenedLessonId } = useLessonProgress();
+  const { chapters, lessons } = Route.useLoaderData();
+  const { completedLessonIds, lastOpenedLessonId } = useLessonProgress();
   const lastOpenedLesson = lessons.find((lesson) => lesson.id === lastOpenedLessonId);
 
   return (
@@ -42,14 +43,20 @@ function Home() {
           ) : null}
         </Stack>
 
+        <LearningProgressPanel
+          chapters={chapters}
+          completedLessonIds={completedLessonIds}
+          lessons={lessons}
+        />
+
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
           {[
             [
               "軽い一覧",
               "Lesson 一覧では summary だけを読み込み、詳細データは開いた Lesson ごとに取得します。",
             ],
-            ["作業 DB", "SQLite WASM 導入後は、Lesson ごとにブラウザ内の一時 DB を作ります。"],
-            ["拡張前提", "採点、AI 質問、ダンジョン表示は後続フェーズで段階的に追加します。"],
+            ["作業 DB", "Lesson ごとに seed data からブラウザ内の一時 SQLite DB を作ります。"],
+            ["採点と復習", "実行結果を期待結果と比較し、正解後に解説と模範解答を確認できます。"],
           ].map(([title, description]) => (
             <Stack key={title} gap={6} className="feature-panel">
               <Title order={2} size="h4">
