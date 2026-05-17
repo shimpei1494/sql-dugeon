@@ -6,6 +6,7 @@ import { markLessonOpened, useCompletedLessons } from "../hooks/useCompletedLess
 import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
 import { GradingPanel } from "./GradingPanel";
+import { LessonSupportPanel } from "./LessonSupportPanel";
 import { QueryResultPanel } from "./QueryResultPanel";
 import { SchemaExplorer } from "./SchemaExplorer";
 import { SqlEditor } from "./SqlEditor";
@@ -84,18 +85,13 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
       <QueryResultPanel executionResult={executionResult} />
       <GradingPanel gradingResult={gradingResult} isCompleted={isCompleted} />
 
-      <Paper withBorder p="lg" radius="md">
-        <Stack gap="sm">
-          <Title order={2} size="h3">
-            ヒント
-          </Title>
-          {lesson.hints.map((hint) => (
-            <Text key={hint} size="sm" c="dimmed">
-              {hint}
-            </Text>
-          ))}
-        </Stack>
-      </Paper>
+      <LessonSupportPanel
+        key={lesson.id}
+        explanation={lesson.explanation}
+        hints={lesson.hints}
+        isReviewAvailable={isCompleted || gradingResult?.ok === true}
+        solutionSql={lesson.solutionSql}
+      />
     </Stack>
   );
 }
