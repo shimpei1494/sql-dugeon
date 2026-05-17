@@ -16,6 +16,9 @@ export function AppShellLayout() {
               <Anchor component={Link} to="/lessons" c="dimmed" size="sm">
                 Lessons
               </Anchor>
+              <Anchor component={Link} to="/progress" c="dimmed" size="sm">
+                Progress
+              </Anchor>
             </Group>
           </Group>
         </Container>

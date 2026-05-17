@@ -36,6 +36,15 @@ body {
   transform: translateY(-1px);
 }
 
+.progress-lesson-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.progress-lesson-link:hover {
+  color: var(--mantine-color-teal-7);
+}
+
 .table-scroll {
   overflow-x: auto;
 }

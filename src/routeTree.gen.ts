@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LessonsIndexRouteImport } from './routes/lessons/index'
 import { Route as LessonsLessonIdRouteImport } from './routes/lessons/$lessonId'
 
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +37,47 @@ const LessonsLessonIdRoute = LessonsLessonIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/lessons/$lessonId': typeof LessonsLessonIdRoute
   '/lessons/': typeof LessonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/lessons/$lessonId': typeof LessonsLessonIdRoute
   '/lessons': typeof LessonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/lessons/$lessonId': typeof LessonsLessonIdRoute
   '/lessons/': typeof LessonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lessons/$lessonId' | '/lessons/'
+  fullPaths: '/' | '/progress' | '/lessons/$lessonId' | '/lessons/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lessons/$lessonId' | '/lessons'
-  id: '__root__' | '/' | '/lessons/$lessonId' | '/lessons/'
+  to: '/' | '/progress' | '/lessons/$lessonId' | '/lessons'
+  id: '__root__' | '/' | '/progress' | '/lessons/$lessonId' | '/lessons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProgressRoute: typeof ProgressRoute
   LessonsLessonIdRoute: typeof LessonsLessonIdRoute
   LessonsIndexRoute: typeof LessonsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProgressRoute: ProgressRoute,
   LessonsLessonIdRoute: LessonsLessonIdRoute,
   LessonsIndexRoute: LessonsIndexRoute,
 }
