@@ -18,6 +18,11 @@ export const filteringLessons: LessonDefinition[] = [
     summary: "WHERE と比較演算子で条件に合う行だけを取得します。",
     tags: ["WHERE", ">="],
     task: "customers テーブルから age が 30 以上の顧客について、すべての列を取得してください。",
+    learningPoint: {
+      syntax: "SELECT *\nFROM テーブル名\nWHERE 列 >= 値;",
+      description:
+        "WHERE 句は取得する行の条件を指定します。比較演算子は = / <> / > / >= / < / <= が使えます。",
+    },
     schema: [customersTable],
     starterSql: "SELECT *\nFROM customers\nWHERE ;",
     compareMode: "unordered",
@@ -35,6 +40,11 @@ export const filteringLessons: LessonDefinition[] = [
     summary: "TEXT 型の値を条件にして行を絞り込みます。",
     tags: ["WHERE", "TEXT"],
     task: "customers テーブルから city が Tokyo の顧客について、name と city を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列1, 列2\nFROM テーブル名\nWHERE 列 = '文字列';",
+      description:
+        "TEXT 型の値を条件にするときは、'Tokyo' のように文字列をシングルクォートで囲みます。",
+    },
     schema: [customersTable],
     starterSql: "SELECT name, city\nFROM customers\nWHERE ;",
     compareMode: "unordered",
@@ -52,6 +62,11 @@ export const filteringLessons: LessonDefinition[] = [
     summary: "LIKE を使って文字列のパターンに一致する行を探します。",
     tags: ["WHERE", "LIKE"],
     task: "customers テーブルから name が Mio で始まる顧客について、id と name を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 列 LIKE 'パターン%';",
+      description:
+        "LIKE は文字列のパターン一致で行を絞り込みます。% は 0 文字以上の任意の文字列、_ は任意の 1 文字に対応します。",
+    },
     schema: [customersTable],
     starterSql: "SELECT id, name\nFROM customers\nWHERE name LIKE ;",
     compareMode: "unordered",
@@ -69,6 +84,11 @@ export const filteringLessons: LessonDefinition[] = [
     summary: "IN を使って複数候補のいずれかに一致する行を取得します。",
     tags: ["WHERE", "IN"],
     task: "customers テーブルから city が Tokyo または Osaka の顧客について、name と city を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 列 IN (値1, 値2);",
+      description:
+        "IN は「複数の候補のいずれかに一致する」条件です。同じ列への OR 条件の並びを短く書けます。",
+    },
     schema: [customersTable],
     starterSql: "SELECT name, city\nFROM customers\nWHERE city IN ();",
     compareMode: "unordered",
@@ -89,6 +109,11 @@ export const filteringLessons: LessonDefinition[] = [
     summary: "数値条件で注文データを絞り込みます。",
     tags: ["WHERE", ">="],
     task: "orders テーブルから total_amount が 9000 以上の注文について、id と total_amount を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 数値の列 >= 数値;",
+      description:
+        "数値はシングルクォートで囲まずそのまま書きます。文字列と書き方が違う点に注意してください。",
+    },
     schema: [ordersTable],
     starterSql: "SELECT id, total_amount\nFROM orders\nWHERE ;",
     compareMode: "unordered",

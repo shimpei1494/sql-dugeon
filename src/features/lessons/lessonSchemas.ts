@@ -43,6 +43,12 @@ export const chapterSchema = v.object({
   order: integerSchema,
 });
 
+/** 正解前から表示する「このレッスンで学ぶ構文」。 */
+const learningPointSchema = v.object({
+  syntax: requiredStringSchema,
+  description: requiredStringSchema,
+});
+
 export const lessonSchema = v.object({
   id: requiredStringSchema,
   chapterId: requiredStringSchema,
@@ -52,6 +58,7 @@ export const lessonSchema = v.object({
   summary: requiredStringSchema,
   tags: v.array(requiredStringSchema),
   task: requiredStringSchema,
+  learningPoint: learningPointSchema,
   schema: v.pipe(v.array(tableDefinitionSchema), v.nonEmpty()),
   starterSql: requiredStringSchema,
   expectedResult: queryResultSchema,

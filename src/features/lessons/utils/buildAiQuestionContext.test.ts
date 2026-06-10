@@ -12,6 +12,10 @@ const lesson: Lesson = {
   summary: "SELECT と FROM を使ってテーブル全体を取得します。",
   tags: ["SELECT"],
   task: "customers テーブルのすべての列とすべての行を取得してください。",
+  learningPoint: {
+    syntax: "SELECT *\nFROM テーブル名;",
+    description: "SELECT はデータ取得の基本命令です。",
+  },
   schema: [
     {
       name: "customers",
@@ -50,6 +54,8 @@ describe("buildAiQuestionContext", () => {
 
     expect(context).toContain("答えの SQL を直接教えず");
     expect(context).toContain("# 課題: 顧客をすべて取得する");
+    expect(context).toContain("このレッスンで学ぶ構文:");
+    expect(context).toContain("SELECT はデータ取得の基本命令です。");
     expect(context).toContain('CREATE TABLE "customers"');
     expect(context).toContain('"id" INTEGER');
     expect(context).toContain("| id | name |");

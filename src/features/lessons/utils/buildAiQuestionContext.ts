@@ -101,7 +101,7 @@ export function buildAiQuestionContext({
 
   const sections = [
     purposeInstructions[purpose],
-    `# 課題: ${lesson.title}\n\n${lesson.task}`,
+    `# 課題: ${lesson.title}\n\n${lesson.task}\n\nこのレッスンで学ぶ構文:\n\n\`\`\`sql\n${lesson.learningPoint.syntax}\n\`\`\`\n\n${lesson.learningPoint.description}`,
     `# テーブル定義と初期データ\n\n${formatSchemaSection(lesson.schema)}`,
     `# 期待する出力\n\n${compareModeNote}\n\n${formatMarkdownTable(
       lesson.expectedResult.columns,

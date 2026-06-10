@@ -1,4 +1,15 @@
-import { Badge, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Code,
+  Divider,
+  Group,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -49,11 +60,25 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
       </Group>
 
       <Paper withBorder p="lg" radius="md">
-        <Stack gap="xs">
-          <Title order={2} size="h3">
-            課題
-          </Title>
-          <Text>{lesson.task}</Text>
+        <Stack gap="md">
+          <Stack gap="xs">
+            <Title order={2} size="h3">
+              課題
+            </Title>
+            <Text>{lesson.task}</Text>
+          </Stack>
+          <Divider />
+          <Stack gap="xs">
+            <Title order={3} size="h4">
+              このレッスンで学ぶ構文
+            </Title>
+            <Code block className="solution-code">
+              {lesson.learningPoint.syntax}
+            </Code>
+            <Text size="sm" c="dimmed">
+              {lesson.learningPoint.description}
+            </Text>
+          </Stack>
         </Stack>
       </Paper>
 

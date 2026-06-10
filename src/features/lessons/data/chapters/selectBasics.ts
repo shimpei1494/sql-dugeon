@@ -18,6 +18,11 @@ export const selectBasicsLessons: LessonDefinition[] = [
     summary: "SELECT と FROM を使ってテーブル全体を取得します。",
     tags: ["SELECT", "FROM"],
     task: "customers テーブルのすべての列とすべての行を取得してください。",
+    learningPoint: {
+      syntax: "SELECT *\nFROM テーブル名;",
+      description:
+        "SELECT はデータ取得の基本命令です。* は「すべての列」を意味し、FROM で取得元のテーブルを指定します。",
+    },
     schema: [customersTable],
     starterSql: "SELECT *\nFROM customers;",
     compareMode: "unordered",
@@ -38,6 +43,11 @@ export const selectBasicsLessons: LessonDefinition[] = [
     summary: "列名を指定して、必要なデータだけを取り出します。",
     tags: ["SELECT", "columns"],
     task: "customers テーブルから name と email だけを取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列1, 列2\nFROM テーブル名;",
+      description:
+        "列名をカンマ区切りで指定すると、必要な列だけを取得できます。列は指定した順番で結果に並びます。",
+    },
     schema: [customersTable],
     starterSql: "SELECT\n  \nFROM customers;",
     compareMode: "unordered",

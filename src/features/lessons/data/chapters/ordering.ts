@@ -18,6 +18,11 @@ export const orderingLessons: LessonDefinition[] = [
     summary: "ORDER BY と DESC で高い値から順に並べます。",
     tags: ["ORDER BY", "DESC"],
     task: "orders テーブルを total_amount の高い順に並べ、すべての列を取得してください。",
+    learningPoint: {
+      syntax: "SELECT *\nFROM テーブル名\nORDER BY 列 DESC;",
+      description:
+        "ORDER BY は結果の並び順を指定します。DESC を付けると降順（大きい順）、ASC または省略で昇順（小さい順）です。",
+    },
     schema: [ordersTable],
     starterSql: "SELECT *\nFROM orders\nORDER BY ;",
     compareMode: "ordered",
@@ -38,6 +43,11 @@ export const orderingLessons: LessonDefinition[] = [
     summary: "ORDER BY と LIMIT を組み合わせて最新の行だけを取得します。",
     tags: ["ORDER BY", "LIMIT"],
     task: "orders テーブルを ordered_at の新しい順に並べ、先頭 3 件について id と ordered_at を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nORDER BY 列 DESC\nLIMIT 件数;",
+      description:
+        "LIMIT は結果の先頭から指定した件数だけを取得します。ORDER BY で並べてから LIMIT で絞るのが定番の組み合わせです。",
+    },
     schema: [ordersTable],
     starterSql: "SELECT id, ordered_at\nFROM orders\nORDER BY \nLIMIT ;",
     compareMode: "ordered",
@@ -58,6 +68,11 @@ export const orderingLessons: LessonDefinition[] = [
     summary: "ASC と LIMIT で小さい値から必要な件数だけ取得します。",
     tags: ["ORDER BY", "ASC", "LIMIT"],
     task: "orders テーブルを total_amount の低い順に並べ、先頭 2 件について id と total_amount を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nORDER BY 列 ASC\nLIMIT 件数;",
+      description:
+        "ASC は昇順（小さい順）です。省略しても昇順になりますが、明示すると意図が伝わりやすくなります。",
+    },
     schema: [ordersTable],
     starterSql: "SELECT id, total_amount\nFROM orders\nORDER BY \nLIMIT ;",
     compareMode: "ordered",
@@ -79,6 +94,11 @@ export const orderingLessons: LessonDefinition[] = [
     summary: "TEXT 型の列でも ORDER BY で並び替えできます。",
     tags: ["ORDER BY", "DESC"],
     task: "customers テーブルを name の降順に並べ、id と name を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nORDER BY 文字列の列 DESC;",
+      description:
+        "ORDER BY は数値だけでなく文字列にも使えます。文字列は辞書順（アルファベット順）で並びます。",
+    },
     schema: [customersTable],
     starterSql: "SELECT id, name\nFROM customers\nORDER BY ;",
     compareMode: "ordered",

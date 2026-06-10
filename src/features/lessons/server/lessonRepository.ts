@@ -93,6 +93,7 @@ export async function getLessonSummaries(): Promise<LessonSummary[]> {
       solutionSql: _solutionSql,
       explanation: _explanation,
       task: _task,
+      learningPoint: _learningPoint,
       ...summary
     }) => summary,
   );
