@@ -19,12 +19,19 @@ import type { LessonPayload } from "../types";
 import { AiQuestionPanel } from "./AiQuestionPanel";
 import { LessonSupportPanel } from "./LessonSupportPanel";
 import { ResultComparisonPanel } from "./ResultComparisonPanel";
+import { RunStatusBanner } from "./RunStatusBanner";
 import { SchemaExplorer } from "./SchemaExplorer";
 import { SqlEditor } from "./SqlEditor";
 
 type LessonWorkspaceProps = {
   payload: LessonPayload;
 };
+
+const resultPanelId = "result-comparison-panel";
+
+function scrollToResultPanel() {
+  document.getElementById(resultPanelId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
   const { lesson, nextLesson, seedVersion } = payload;
@@ -104,18 +111,26 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
               isRunning={isRunning}
               tables={lesson.schema}
             />
+            <RunStatusBanner
+              executionResult={executionResult}
+              gradingResult={gradingResult}
+              nextLesson={nextLesson}
+              onShowDetails={scrollToResultPanel}
+            />
           </Stack>
         </Paper>
       </SimpleGrid>
 
-      <ResultComparisonPanel
-        compareMode={lesson.compareMode}
-        expectedResult={lesson.expectedResult}
-        executionResult={executionResult}
-        gradingResult={gradingResult}
-        isCompleted={isCompleted}
-        nextLesson={nextLesson}
-      />
+      <div id={resultPanelId} className="result-panel-anchor">
+        <ResultComparisonPanel
+          compareMode={lesson.compareMode}
+          expectedResult={lesson.expectedResult}
+          executionResult={executionResult}
+          gradingResult={gradingResult}
+          isCompleted={isCompleted}
+          nextLesson={nextLesson}
+        />
+      </div>
 
       <LessonSupportPanel
         key={lesson.id}

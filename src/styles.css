@@ -53,6 +53,10 @@ body {
   background-color: var(--mantine-color-red-1);
 }
 
+.result-panel-anchor {
+  scroll-margin-top: 16px;
+}
+
 .sql-editor-frame {
   overflow: hidden;
   border: 1px solid var(--mantine-color-gray-4);
