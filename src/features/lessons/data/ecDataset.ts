@@ -13,6 +13,13 @@ import type { TableDefinition } from "../types";
  * - 注文 106: total_amount = 9000（>= 9000 と > 9000 の判別）
  * - 注文 107: total_amount = 5000（BETWEEN の両端を含む挙動の判別）
  * - delivered_at: NULL を含む列（IS NULL と = NULL の判別）
+ * - SQL Primer / Data Modeling Guide: 同価格 3200（RANK と DENSE_RANK の判別）
+ * - Gift Box: category_id が NULL（NOT IN + NULL の罠の再現用）
+ * - Tumbler: 一度も注文されていない商品（NOT EXISTS 練習用）
+ * - Outdoor: 商品が 1 つも無いカテゴリ（NOT EXISTS 練習用）
+ *
+ * order_items の quantity * unit_price の合計は、対応する orders.total_amount と
+ * 一致するように作ってある（学習者がデータの矛盾で混乱しないため）。
  */
 export const customersTable: TableDefinition = {
   name: "customers",
@@ -92,5 +99,64 @@ export const ordersTable: TableDefinition = {
       total_amount: 5_000,
       delivered_at: null,
     },
+  ],
+};
+
+export const categoriesTable: TableDefinition = {
+  name: "categories",
+  columns: [
+    { name: "id", type: "INTEGER" },
+    { name: "name", type: "TEXT" },
+  ],
+  rows: [
+    { id: 1, name: "Electronics" },
+    { id: 2, name: "Books" },
+    { id: 3, name: "Coffee" },
+    { id: 4, name: "Outdoor" },
+  ],
+};
+
+export const productsTable: TableDefinition = {
+  name: "products",
+  columns: [
+    { name: "id", type: "INTEGER" },
+    { name: "name", type: "TEXT" },
+    { name: "category_id", type: "INTEGER", nullable: true },
+    { name: "price", type: "INTEGER" },
+  ],
+  rows: [
+    { id: 1, name: "Wireless Earbuds", category_id: 1, price: 8_700 },
+    { id: 2, name: "Mechanical Keyboard", category_id: 1, price: 12_800 },
+    { id: 3, name: "USB-C Cable", category_id: 1, price: 2_900 },
+    { id: 4, name: "SQL Primer", category_id: 2, price: 3_200 },
+    { id: 5, name: "Data Modeling Guide", category_id: 2, price: 3_200 },
+    { id: 6, name: "Drip Coffee Set", category_id: 3, price: 3_800 },
+    { id: 7, name: "Coffee Beans 500g", category_id: 3, price: 2_100 },
+    { id: 8, name: "Tumbler", category_id: 3, price: 2_500 },
+    { id: 9, name: "Gift Box", category_id: null, price: 4_500 },
+  ],
+};
+
+export const orderItemsTable: TableDefinition = {
+  name: "order_items",
+  columns: [
+    { name: "id", type: "INTEGER" },
+    { name: "order_id", type: "INTEGER" },
+    { name: "product_id", type: "INTEGER" },
+    { name: "quantity", type: "INTEGER" },
+    { name: "unit_price", type: "INTEGER" },
+  ],
+  rows: [
+    { id: 1, order_id: 101, product_id: 2, quantity: 1, unit_price: 12_800 },
+    { id: 2, order_id: 102, product_id: 7, quantity: 2, unit_price: 2_100 },
+    { id: 3, order_id: 103, product_id: 2, quantity: 1, unit_price: 12_800 },
+    { id: 4, order_id: 103, product_id: 1, quantity: 1, unit_price: 8_700 },
+    { id: 5, order_id: 104, product_id: 6, quantity: 2, unit_price: 3_800 },
+    { id: 6, order_id: 105, product_id: 4, quantity: 1, unit_price: 3_200 },
+    { id: 7, order_id: 105, product_id: 5, quantity: 1, unit_price: 3_200 },
+    { id: 8, order_id: 105, product_id: 3, quantity: 1, unit_price: 2_900 },
+    { id: 9, order_id: 106, product_id: 9, quantity: 2, unit_price: 4_500 },
+    { id: 10, order_id: 107, product_id: 7, quantity: 1, unit_price: 2_100 },
+    { id: 11, order_id: 107, product_id: 3, quantity: 1, unit_price: 2_900 },
   ],
 };
