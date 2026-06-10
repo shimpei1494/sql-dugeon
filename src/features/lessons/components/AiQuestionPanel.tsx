@@ -12,17 +12,17 @@ import {
 import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 
-import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import type { Lesson } from "../types";
 import type { AiQuestionPurpose } from "../utils/buildAiQuestionContext";
 import { aiQuestionPurposes, buildAiQuestionContext } from "../utils/buildAiQuestionContext";
+import type { LessonGradingResult } from "../utils/gradeLessonAttempt";
 
 type AiQuestionPanelProps = {
   lesson: Lesson;
   sql: string;
   executionResult?: SqlExecutionResult;
-  gradingResult?: QueryResultComparison;
+  gradingResult?: LessonGradingResult;
 };
 
 export function AiQuestionPanel({

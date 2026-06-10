@@ -49,6 +49,18 @@ const learningPointSchema = v.object({
   description: requiredStringSchema,
 });
 
+/**
+ * 採点時に SQL 中での使用を必須にする構文。
+ * 結果一致だけでは判別できない課題（LIKE を = で代用、IN を OR で代用など）で、
+ * 課題が教えたい構文を実際に使ってもらうために指定する。
+ */
+const requiredConstructSchema = v.object({
+  /** 必須キーワード。空白は柔軟にマッチする（例: "ORDER BY"） */
+  keyword: requiredStringSchema,
+  /** 不足時に表示する学習メッセージ */
+  message: requiredStringSchema,
+});
+
 export const lessonSchema = v.object({
   id: requiredStringSchema,
   chapterId: requiredStringSchema,
@@ -64,6 +76,7 @@ export const lessonSchema = v.object({
   expectedResult: queryResultSchema,
   compareMode: v.picklist(["ordered", "unordered"]),
   allowedStatements: v.pipe(v.array(allowedStatementSchema), v.nonEmpty()),
+  requiredConstructs: v.optional(v.array(requiredConstructSchema), []),
   hints: v.array(requiredStringSchema),
   solutionSql: requiredStringSchema,
   explanation: requiredStringSchema,

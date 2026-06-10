@@ -5,6 +5,7 @@ import { compareQueryResults } from "../../sqlite/compareQueryResults";
 import { validateExecutableSql } from "../../sqlite/sqlSafety";
 import { lessonDefinitions } from "../data";
 import { lessonDefinitionSchema } from "../lessonSchemas";
+import { findMissingConstructs } from "../utils/sqlConstructs";
 import { deriveExpectedResult, executeDefinitionSql } from "./deriveExpectedResult";
 import { getChapters, getLessonPayload, getLessonSummaries } from "./lessonRepository";
 
@@ -69,6 +70,21 @@ describe("lessonRepository", () => {
     const payload = await getLessonPayload("select-customer-contact");
 
     expect(payload?.lesson.expectedResult.columns).toEqual(["name", "email"]);
+  });
+
+  it("satisfies each lesson's own required constructs with its solutionSql", async () => {
+    const payloads = await getAllLessonPayloads();
+
+    for (const payload of payloads) {
+      const lesson = payload?.lesson;
+
+      if (lesson) {
+        expect(
+          findMissingConstructs(lesson.solutionSql, lesson.requiredConstructs),
+          `solutionSql of ${lesson.id} does not use its own required constructs`,
+        ).toEqual([]);
+      }
+    }
   });
 
   it("does not include counterexamples in the client payload", async () => {

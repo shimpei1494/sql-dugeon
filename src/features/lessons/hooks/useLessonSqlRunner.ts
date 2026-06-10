@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 
-import { compareQueryResults } from "../../sqlite/compareQueryResults";
-import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import { executeLessonSql } from "../../sqlite/executeSql";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import type { Lesson } from "../types";
+import { gradeLessonAttempt } from "../utils/gradeLessonAttempt";
+import type { LessonGradingResult } from "../utils/gradeLessonAttempt";
 import { clearLessonDraft, readLessonDraft, writeLessonDraft } from "./lessonDraftStorage";
 import { markLessonCompleted } from "./useCompletedLessons";
 
 export function useLessonSqlRunner(lesson: Lesson) {
   const [sql, setSqlState] = useState(lesson.starterSql);
   const [executionResult, setExecutionResult] = useState<SqlExecutionResult | undefined>();
-  const [gradingResult, setGradingResult] = useState<QueryResultComparison | undefined>();
+  const [gradingResult, setGradingResult] = useState<LessonGradingResult | undefined>();
   const [isRunning, setIsRunning] = useState(false);
 
   // 下書きは localStorage 由来のため、hydration 後に復元する。
@@ -41,14 +41,10 @@ export function useLessonSqlRunner(lesson: Lesson) {
       setExecutionResult(result);
 
       if (result.ok) {
-        const comparison = compareQueryResults(
-          lesson.expectedResult,
-          result.result,
-          lesson.compareMode,
-        );
-        setGradingResult(comparison);
+        const grading = gradeLessonAttempt(lesson, sql, result.result);
+        setGradingResult(grading);
 
-        if (comparison.ok) {
+        if (grading.ok) {
           markLessonCompleted(lesson.id);
         }
       } else {

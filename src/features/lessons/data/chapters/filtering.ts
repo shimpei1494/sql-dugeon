@@ -81,6 +81,13 @@ export const filteringLessons: LessonDefinition[] = [
     starterSql: "SELECT id, name\nFROM customers\nWHERE name LIKE ;",
     compareMode: "unordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "LIKE",
+        message:
+          "この課題では LIKE を使って「Mio で始まる」というパターン条件を表すのが目標です。名前を直接 = で指定すると、他のデータでは使えない SQL になってしまいます。",
+      },
+    ],
     hints: ["LIKE では % が任意の文字列に対応します。", "Mio で始まる値は 'Mio%' で表せます。"],
     solutionSql: "SELECT id, name\nFROM customers\nWHERE name LIKE 'Mio%';",
     explanation: "LIKE は部分一致や前方一致の検索に使います。% は 0 文字以上の任意の文字列です。",
@@ -109,6 +116,13 @@ export const filteringLessons: LessonDefinition[] = [
     starterSql: "SELECT name, city\nFROM customers\nWHERE city IN ();",
     compareMode: "unordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "IN",
+        message:
+          "この課題では IN を使って複数の候補をまとめて指定するのが目標です。OR を並べても同じ結果になりますが、IN の方が短く読みやすく書けます。",
+      },
+    ],
     hints: [
       "IN は複数の候補値をカンマ区切りで指定します。",
       "city IN ('Tokyo', 'Osaka') のように書けます。",

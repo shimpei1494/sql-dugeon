@@ -1,6 +1,6 @@
 import type { Lesson, QueryResult, SqlValue } from "../lessons/types";
 
-type QueryRowDiff = {
+export type QueryRowDiff = {
   /** true の位置の期待行は、実行結果に対応する行がありません。 */
   expectedRowFlags: boolean[];
   /** true の位置の実行結果行は、期待結果に対応する行がありません。 */
