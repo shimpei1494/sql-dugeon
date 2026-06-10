@@ -6,6 +6,7 @@ import { filteringChapter, filteringLessons } from "./chapters/filtering";
 import { joinChapter, joinLessons } from "./chapters/join";
 import { orderingChapter, orderingLessons } from "./chapters/ordering";
 import { selectBasicsChapter, selectBasicsLessons } from "./chapters/selectBasics";
+import { setOperationsChapter, setOperationsLessons } from "./chapters/setOperations";
 import { subqueryChapter, subqueryLessons } from "./chapters/subquery";
 import { windowFunctionsChapter, windowFunctionsLessons } from "./chapters/windowFunctions";
 
@@ -22,6 +23,7 @@ export const chapterDefinitions: Chapter[] = [
   subqueryChapter,
   cteChapter,
   windowFunctionsChapter,
+  setOperationsChapter,
 ];
 
 export const lessonDefinitions: LessonDefinition[] = [
@@ -34,4 +36,5 @@ export const lessonDefinitions: LessonDefinition[] = [
   ...subqueryLessons,
   ...cteLessons,
   ...windowFunctionsLessons,
+  ...setOperationsLessons,
 ];
