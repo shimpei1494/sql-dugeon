@@ -25,6 +25,7 @@ describe("lessonRepository", () => {
       "aggregation",
       "join",
       "expressions",
+      "subquery",
     ]);
   });
 
