@@ -66,6 +66,42 @@ export const aggregationLessons: LessonDefinition[] = [
     explanation: "SUM は NULL を無視して合計します。集計関数は SELECT 句の中で使います。",
   },
   {
+    id: "aggregate-avg-amount",
+    chapterId: "aggregation",
+    title: "平均注文金額を求める",
+    difficulty: "beginner",
+    estimatedMinutes: 8,
+    summary: "AVG と ROUND で平均値を見やすく取得します。",
+    tags: ["AVG", "ROUND"],
+    task: "orders テーブルの total_amount の平均を小数第 1 位に丸め、avg_amount という列名で取得してください。",
+    learningPoint: {
+      syntax: "SELECT ROUND(AVG(列), 桁数) AS 列名\nFROM テーブル名;",
+      description:
+        "AVG は平均値を返しますが、割り切れないと 9914.2857... のような長い小数になります。ROUND(値, 桁数) で丸めて扱いやすくします。",
+    },
+    schema: [ordersTable],
+    starterSql: "SELECT \nFROM orders;",
+    compareMode: "unordered",
+    allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "AVG",
+        message: "この課題では AVG で平均を集計するのが目標です。",
+      },
+      {
+        keyword: "ROUND",
+        message: "この課題では ROUND で平均値を小数第 1 位に丸めるのが目標です。",
+      },
+    ],
+    hints: [
+      "AVG(total_amount) で平均を計算できます。",
+      "ROUND(AVG(total_amount), 1) で小数第 1 位に丸めます。",
+    ],
+    solutionSql: "SELECT ROUND(AVG(total_amount), 1) AS avg_amount\nFROM orders;",
+    explanation:
+      "AVG は NULL を除いた平均を返します。表示用の値は ROUND で丸めるのが実務でも定番です。",
+  },
+  {
     id: "aggregate-min-max-amount",
     chapterId: "aggregation",
     title: "最高額と最低額を調べる",

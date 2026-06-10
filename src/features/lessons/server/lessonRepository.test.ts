@@ -24,6 +24,7 @@ describe("lessonRepository", () => {
       "ordering",
       "aggregation",
       "join",
+      "expressions",
     ]);
   });
 

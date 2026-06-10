@@ -1,5 +1,6 @@
 import type { Chapter, LessonDefinition } from "../types";
 import { aggregationChapter, aggregationLessons } from "./chapters/aggregation";
+import { expressionsChapter, expressionsLessons } from "./chapters/expressions";
 import { filteringChapter, filteringLessons } from "./chapters/filtering";
 import { joinChapter, joinLessons } from "./chapters/join";
 import { orderingChapter, orderingLessons } from "./chapters/ordering";
@@ -14,6 +15,7 @@ export const chapterDefinitions: Chapter[] = [
   orderingChapter,
   aggregationChapter,
   joinChapter,
+  expressionsChapter,
 ];
 
 export const lessonDefinitions: LessonDefinition[] = [
@@ -22,4 +24,5 @@ export const lessonDefinitions: LessonDefinition[] = [
   ...orderingLessons,
   ...aggregationLessons,
   ...joinLessons,
+  ...expressionsLessons,
 ];
