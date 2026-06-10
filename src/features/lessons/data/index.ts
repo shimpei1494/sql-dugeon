@@ -4,7 +4,7 @@ import { orderingChapter, orderingLessons } from "./chapters/ordering";
 import { selectBasicsChapter, selectBasicsLessons } from "./chapters/selectBasics";
 
 /** 教材データを更新したら、localStorage の古い進捗と区別するためにバージョンを上げる。 */
-export const seedVersion = "2026-06-10.phase-2";
+export const seedVersion = "2026-06-10.2";
 
 export const chapterDefinitions: Chapter[] = [
   selectBasicsChapter,

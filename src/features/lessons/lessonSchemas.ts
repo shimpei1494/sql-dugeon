@@ -69,8 +69,22 @@ export const lessonSchema = v.object({
   explanation: requiredStringSchema,
 });
 
+/**
+ * 正解にしてはいけない代表的な誤答 SQL。
+ * テストが「データセット上で solutionSql と異なる結果になること」を保証するため、
+ * データが誤答を判別できないままレッスンが増えるのを防げる。
+ * クライアントへは配信されない（lessonSchema の parse で除去される）。
+ */
+const counterexampleSchema = v.object({
+  sql: requiredStringSchema,
+  reason: requiredStringSchema,
+});
+
 /** 教材として手書きする Lesson 定義。expectedResult は solutionSql から自動導出する。 */
-export const lessonDefinitionSchema = v.omit(lessonSchema, ["expectedResult"]);
+export const lessonDefinitionSchema = v.object({
+  ...v.omit(lessonSchema, ["expectedResult"]).entries,
+  counterexamples: v.optional(v.array(counterexampleSchema), []),
+});
 
 export const lessonPayloadSchema = v.object({
   lesson: lessonSchema,

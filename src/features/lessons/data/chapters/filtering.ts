@@ -30,6 +30,16 @@ export const filteringLessons: LessonDefinition[] = [
     hints: ["WHERE は取得する行の条件を指定します。", "30 以上は age >= 30 と書けます。"],
     solutionSql: "SELECT *\nFROM customers\nWHERE age >= 30;",
     explanation: "WHERE 句に比較条件を書くと、条件を満たす行だけが結果に残ります。",
+    counterexamples: [
+      {
+        sql: "SELECT *\nFROM customers\nWHERE age > 30;",
+        reason: "ちょうど 30 歳の顧客が漏れる（>= と > の違い）",
+      },
+      {
+        sql: "SELECT *\nFROM customers\nWHERE age > 31;",
+        reason: "30〜31 歳の顧客が漏れる",
+      },
+    ],
   },
   {
     id: "filter-tokyo-customers",
@@ -74,6 +84,12 @@ export const filteringLessons: LessonDefinition[] = [
     hints: ["LIKE では % が任意の文字列に対応します。", "Mio で始まる値は 'Mio%' で表せます。"],
     solutionSql: "SELECT id, name\nFROM customers\nWHERE name LIKE 'Mio%';",
     explanation: "LIKE は部分一致や前方一致の検索に使います。% は 0 文字以上の任意の文字列です。",
+    counterexamples: [
+      {
+        sql: "SELECT id, name\nFROM customers\nWHERE name LIKE '%Mio%';",
+        reason: "部分一致になり、名前の途中に Mio を含む顧客まで一致してしまう",
+      },
+    ],
   },
   {
     id: "filter-customer-city-in",
@@ -99,6 +115,12 @@ export const filteringLessons: LessonDefinition[] = [
     ],
     solutionSql: "SELECT name, city\nFROM customers\nWHERE city IN ('Tokyo', 'Osaka');",
     explanation: "IN を使うと、同じ列に対する複数の等価条件を短く書けます。",
+    counterexamples: [
+      {
+        sql: "SELECT name, city\nFROM customers\nWHERE city = 'Tokyo';",
+        reason: "Osaka の顧客が漏れる",
+      },
+    ],
   },
   {
     id: "filter-orders-over-threshold",
@@ -121,5 +143,11 @@ export const filteringLessons: LessonDefinition[] = [
     hints: ["total_amount は数値の列です。", "9000 以上は total_amount >= 9000 と書けます。"],
     solutionSql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount >= 9000;",
     explanation: "数値列に対しても WHERE の比較演算子で条件を指定できます。",
+    counterexamples: [
+      {
+        sql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount > 9000;",
+        reason: "ちょうど 9000 円の注文が漏れる（>= と > の違い）",
+      },
+    ],
   },
 ];

@@ -33,6 +33,12 @@ export const orderingLessons: LessonDefinition[] = [
     ],
     solutionSql: "SELECT *\nFROM orders\nORDER BY total_amount DESC;",
     explanation: "ORDER BY は結果の並び順を指定します。DESC は降順、ASC は昇順です。",
+    counterexamples: [
+      {
+        sql: "SELECT *\nFROM orders\nORDER BY total_amount;",
+        reason: "DESC を付けないと昇順になり、高い順にならない",
+      },
+    ],
   },
   {
     id: "order-recent-orders-limit-three",
