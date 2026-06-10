@@ -5,6 +5,8 @@ import type { QueryResult, SqlValue, TableDefinition } from "../types";
 type DataTableProps = {
   table: TableDefinition | QueryResult;
   emptyLabel?: string;
+  /** true の位置の行を「期待結果と一致しない行」としてハイライトします。 */
+  rowFlags?: boolean[];
 };
 
 function formatValue(value: SqlValue): string {
@@ -19,7 +21,7 @@ function formatValue(value: SqlValue): string {
   return String(value);
 }
 
-export function DataTable({ table, emptyLabel = "データがありません" }: DataTableProps) {
+export function DataTable({ table, emptyLabel = "データがありません", rowFlags }: DataTableProps) {
   const columns =
     "columns" in table
       ? table.columns.map((column) => (typeof column === "string" ? column : column.name))
@@ -45,11 +47,12 @@ export function DataTable({ table, emptyLabel = "データがありません" }:
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {rows.map((row) => {
-            const rowKey = columns.map((column) => formatValue(row[column] ?? null)).join("|");
+          {rows.map((row, rowIndex) => {
+            const rowKey = `${rowIndex}:${columns.map((column) => formatValue(row[column] ?? null)).join("|")}`;
+            const isFlagged = rowFlags?.[rowIndex] === true;
 
             return (
-              <Table.Tr key={rowKey}>
+              <Table.Tr key={rowKey} className={isFlagged ? "diff-row" : undefined}>
                 {columns.map((column) => (
                   <Table.Td key={column}>{formatValue(row[column] ?? null)}</Table.Td>
                 ))}

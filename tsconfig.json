@@ -17,7 +17,10 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    /* サーバー専用コード（node:fs など）の型解決に必要 */
+    "types": ["node"]
   },
   "include": ["src"]
 }

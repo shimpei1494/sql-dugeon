@@ -49,11 +49,31 @@ body {
   overflow-x: auto;
 }
 
-.sql-editor {
+.diff-row > td {
+  background-color: var(--mantine-color-red-1);
+}
+
+.result-panel-anchor {
+  scroll-margin-top: 16px;
+}
+
+.sql-editor-frame {
+  overflow: hidden;
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: var(--mantine-radius-sm);
+}
+
+.sql-editor-frame .cm-editor {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
+  font-size: 14px;
   line-height: 1.55;
+}
+
+.sql-editor-frame .cm-editor.cm-focused {
+  outline: 2px solid var(--mantine-color-teal-5);
+  outline-offset: -1px;
 }
 
 .solution-code {
@@ -61,4 +81,14 @@ body {
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
   line-height: 1.55;
+}
+
+.ai-question-context {
+  max-height: 320px;
+  overflow-y: auto;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  line-height: 1.55;
+  white-space: pre-wrap;
 }

@@ -1,5 +1,12 @@
 import type { Lesson, QueryResult, SqlValue } from "../lessons/types";
 
+type QueryRowDiff = {
+  /** true の位置の期待行は、実行結果に対応する行がありません。 */
+  expectedRowFlags: boolean[];
+  /** true の位置の実行結果行は、期待結果に対応する行がありません。 */
+  actualRowFlags: boolean[];
+};
+
 export type QueryResultComparison =
   | {
       ok: true;
@@ -7,6 +14,7 @@ export type QueryResultComparison =
   | {
       ok: false;
       message: string;
+      rowDiff?: QueryRowDiff;
     };
 
 function normalizeValue(value: SqlValue): SqlValue {
@@ -25,7 +33,7 @@ function compareColumns(expected: string[], actual: string[]): QueryResultCompar
   if (expected.length !== actual.length) {
     return {
       ok: false,
-      message: `列数が違います。期待: ${expected.length} 列 / 実際: ${actual.length} 列`,
+      message: `列数が違います。期待: ${expected.length} 列（${expected.join(", ")}）/ 実際: ${actual.length} 列（${actual.join(", ")}）`,
     };
   }
 
@@ -34,64 +42,84 @@ function compareColumns(expected: string[], actual: string[]): QueryResultCompar
   if (mismatchedIndex >= 0) {
     return {
       ok: false,
-      message: `列が違います。${mismatchedIndex + 1} 列目は ${expected[mismatchedIndex]} を期待しています。`,
+      message: `列が違います。${mismatchedIndex + 1} 列目は ${expected[mismatchedIndex]} を期待していますが、実際は ${actual[mismatchedIndex]} でした。`,
     };
   }
 
   return { ok: true };
 }
 
-function compareOrderedRows(expected: QueryResult, actual: QueryResult): QueryResultComparison {
-  const mismatchedIndex = expected.rows.findIndex(
-    (row, index) =>
-      createRowSignature(expected.columns, row) !==
-      createRowSignature(expected.columns, actual.rows[index] ?? {}),
-  );
-
-  if (mismatchedIndex >= 0) {
-    return {
-      ok: false,
-      message: `${mismatchedIndex + 1} 行目の値が期待結果と違います。`,
-    };
-  }
-
-  return { ok: true };
+function diffOrderedRows(expectedSignatures: string[], actualSignatures: string[]): QueryRowDiff {
+  return {
+    expectedRowFlags: expectedSignatures.map(
+      (signature, index) => signature !== actualSignatures[index],
+    ),
+    actualRowFlags: actualSignatures.map(
+      (signature, index) => signature !== expectedSignatures[index],
+    ),
+  };
 }
 
-function compareUnorderedRows(expected: QueryResult, actual: QueryResult): QueryResultComparison {
-  const expectedCounts = new Map<string, number>();
+function diffUnorderedRows(expectedSignatures: string[], actualSignatures: string[]): QueryRowDiff {
+  const unmatchedExpectedIndexes = new Map<string, number[]>();
 
-  for (const row of expected.rows) {
-    const signature = createRowSignature(expected.columns, row);
-    expectedCounts.set(signature, (expectedCounts.get(signature) ?? 0) + 1);
-  }
+  expectedSignatures.forEach((signature, index) => {
+    const indexes = unmatchedExpectedIndexes.get(signature);
 
-  for (const row of actual.rows) {
-    const signature = createRowSignature(expected.columns, row);
-    const currentCount = expectedCounts.get(signature) ?? 0;
-
-    if (currentCount === 0) {
-      return {
-        ok: false,
-        message: "期待結果にない行が含まれています。",
-      };
-    }
-
-    if (currentCount === 1) {
-      expectedCounts.delete(signature);
+    if (indexes) {
+      indexes.push(index);
     } else {
-      expectedCounts.set(signature, currentCount - 1);
+      unmatchedExpectedIndexes.set(signature, [index]);
+    }
+  });
+
+  const actualRowFlags = actualSignatures.map((signature) => {
+    const indexes = unmatchedExpectedIndexes.get(signature);
+
+    if (indexes && indexes.length > 0) {
+      indexes.shift();
+      return false;
+    }
+
+    return true;
+  });
+
+  const expectedRowFlags = expectedSignatures.map(() => false);
+
+  for (const indexes of unmatchedExpectedIndexes.values()) {
+    for (const index of indexes) {
+      expectedRowFlags[index] = true;
     }
   }
 
-  if (expectedCounts.size > 0) {
-    return {
-      ok: false,
-      message: "期待される行が不足しています。",
-    };
+  return { expectedRowFlags, actualRowFlags };
+}
+
+function hasFlaggedRow(rowDiff: QueryRowDiff): boolean {
+  return rowDiff.expectedRowFlags.includes(true) || rowDiff.actualRowFlags.includes(true);
+}
+
+function createRowDiffMessage(
+  expected: QueryResult,
+  actual: QueryResult,
+  compareMode: Lesson["compareMode"],
+  expectedSignatures: string[],
+  actualSignatures: string[],
+  rowDiff: QueryRowDiff,
+): string {
+  if (expected.rows.length !== actual.rows.length) {
+    return `行数が違います。期待: ${expected.rows.length} 行 / 実際: ${actual.rows.length} 行`;
   }
 
-  return { ok: true };
+  if (
+    compareMode === "ordered" &&
+    !hasFlaggedRow(diffUnorderedRows(expectedSignatures, actualSignatures))
+  ) {
+    return "値は揃っていますが、行の並び順が期待結果と違います。";
+  }
+
+  const mismatchedRowCount = rowDiff.actualRowFlags.filter(Boolean).length;
+  return `${mismatchedRowCount} 行が期待結果と一致しません。`;
 }
 
 export function compareQueryResults(
@@ -105,16 +133,28 @@ export function compareQueryResults(
     return columnComparison;
   }
 
-  if (expected.rows.length !== actual.rows.length) {
-    return {
-      ok: false,
-      message: `行数が違います。期待: ${expected.rows.length} 行 / 実際: ${actual.rows.length} 行`,
-    };
+  const expectedSignatures = expected.rows.map((row) => createRowSignature(expected.columns, row));
+  const actualSignatures = actual.rows.map((row) => createRowSignature(expected.columns, row));
+
+  const rowDiff =
+    compareMode === "ordered"
+      ? diffOrderedRows(expectedSignatures, actualSignatures)
+      : diffUnorderedRows(expectedSignatures, actualSignatures);
+
+  if (!hasFlaggedRow(rowDiff)) {
+    return { ok: true };
   }
 
-  if (compareMode === "ordered") {
-    return compareOrderedRows(expected, actual);
-  }
-
-  return compareUnorderedRows(expected, actual);
+  return {
+    ok: false,
+    message: createRowDiffMessage(
+      expected,
+      actual,
+      compareMode,
+      expectedSignatures,
+      actualSignatures,
+      rowDiff,
+    ),
+    rowDiff,
+  };
 }

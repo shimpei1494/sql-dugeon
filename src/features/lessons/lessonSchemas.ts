@@ -43,6 +43,12 @@ export const chapterSchema = v.object({
   order: integerSchema,
 });
 
+/** 正解前から表示する「このレッスンで学ぶ構文」。 */
+const learningPointSchema = v.object({
+  syntax: requiredStringSchema,
+  description: requiredStringSchema,
+});
+
 export const lessonSchema = v.object({
   id: requiredStringSchema,
   chapterId: requiredStringSchema,
@@ -52,6 +58,7 @@ export const lessonSchema = v.object({
   summary: requiredStringSchema,
   tags: v.array(requiredStringSchema),
   task: requiredStringSchema,
+  learningPoint: learningPointSchema,
   schema: v.pipe(v.array(tableDefinitionSchema), v.nonEmpty()),
   starterSql: requiredStringSchema,
   expectedResult: queryResultSchema,
@@ -60,6 +67,23 @@ export const lessonSchema = v.object({
   hints: v.array(requiredStringSchema),
   solutionSql: requiredStringSchema,
   explanation: requiredStringSchema,
+});
+
+/**
+ * 正解にしてはいけない代表的な誤答 SQL。
+ * テストが「データセット上で solutionSql と異なる結果になること」を保証するため、
+ * データが誤答を判別できないままレッスンが増えるのを防げる。
+ * クライアントへは配信されない（lessonSchema の parse で除去される）。
+ */
+const counterexampleSchema = v.object({
+  sql: requiredStringSchema,
+  reason: requiredStringSchema,
+});
+
+/** 教材として手書きする Lesson 定義。expectedResult は solutionSql から自動導出する。 */
+export const lessonDefinitionSchema = v.object({
+  ...v.omit(lessonSchema, ["expectedResult"]).entries,
+  counterexamples: v.optional(v.array(counterexampleSchema), []),
 });
 
 export const lessonPayloadSchema = v.object({

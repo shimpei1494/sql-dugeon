@@ -1,17 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { compareQueryResults } from "../../sqlite/compareQueryResults";
 import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import { executeLessonSql } from "../../sqlite/executeSql";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import type { Lesson } from "../types";
+import { clearLessonDraft, readLessonDraft, writeLessonDraft } from "./lessonDraftStorage";
 import { markLessonCompleted } from "./useCompletedLessons";
 
 export function useLessonSqlRunner(lesson: Lesson) {
-  const [sql, setSql] = useState(lesson.starterSql);
+  const [sql, setSqlState] = useState(lesson.starterSql);
   const [executionResult, setExecutionResult] = useState<SqlExecutionResult | undefined>();
   const [gradingResult, setGradingResult] = useState<QueryResultComparison | undefined>();
   const [isRunning, setIsRunning] = useState(false);
+
+  // 下書きは localStorage 由来のため、hydration 後に復元する。
+  useEffect(() => {
+    const draft = readLessonDraft(lesson.id);
+
+    if (draft !== undefined) {
+      setSqlState(draft);
+    }
+  }, [lesson.id]);
+
+  function setSql(value: string) {
+    setSqlState(value);
+
+    if (value === lesson.starterSql) {
+      clearLessonDraft(lesson.id);
+    } else {
+      writeLessonDraft(lesson.id, value);
+    }
+  }
 
   async function runSql() {
     setIsRunning(true);
@@ -40,7 +60,8 @@ export function useLessonSqlRunner(lesson: Lesson) {
   }
 
   function resetSql() {
-    setSql(lesson.starterSql);
+    setSqlState(lesson.starterSql);
+    clearLessonDraft(lesson.id);
     setExecutionResult(undefined);
     setGradingResult(undefined);
   }
