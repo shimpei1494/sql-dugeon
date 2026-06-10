@@ -62,6 +62,9 @@ export const lessonSchema = v.object({
   explanation: requiredStringSchema,
 });
 
+/** 教材として手書きする Lesson 定義。expectedResult は solutionSql から自動導出する。 */
+export const lessonDefinitionSchema = v.omit(lessonSchema, ["expectedResult"]);
+
 export const lessonPayloadSchema = v.object({
   lesson: lessonSchema,
   nextLesson: v.optional(lessonSummarySchema),
