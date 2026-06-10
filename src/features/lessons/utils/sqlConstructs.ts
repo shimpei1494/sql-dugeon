@@ -1,6 +1,6 @@
 import type { Lesson } from "../types";
 
-export type RequiredConstruct = Lesson["requiredConstructs"][number];
+export type SqlConstructRule = Lesson["requiredConstructs"][number];
 
 /** コメントと文字列リテラルを除去し、構文キーワードの誤検出を防ぐ。 */
 function stripCommentsAndStrings(sql: string): string {
@@ -22,11 +22,23 @@ function buildKeywordPattern(keyword: string): RegExp {
 /** SQL 中で使われていない必須構文を返す。 */
 export function findMissingConstructs(
   sql: string,
-  requiredConstructs: RequiredConstruct[],
-): RequiredConstruct[] {
+  requiredConstructs: SqlConstructRule[],
+): SqlConstructRule[] {
   const normalizedSql = stripCommentsAndStrings(sql);
 
   return requiredConstructs.filter(
     (construct) => !buildKeywordPattern(construct.keyword).test(normalizedSql),
+  );
+}
+
+/** SQL 中で使われている禁止構文を返す。 */
+export function findUsedConstructs(
+  sql: string,
+  forbiddenConstructs: SqlConstructRule[],
+): SqlConstructRule[] {
+  const normalizedSql = stripCommentsAndStrings(sql);
+
+  return forbiddenConstructs.filter((construct) =>
+    buildKeywordPattern(construct.keyword).test(normalizedSql),
   );
 }

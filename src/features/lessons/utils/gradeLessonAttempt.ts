@@ -1,7 +1,7 @@
 import { compareQueryResults } from "../../sqlite/compareQueryResults";
 import type { QueryRowDiff } from "../../sqlite/compareQueryResults";
 import type { Lesson, QueryResult } from "../types";
-import { findMissingConstructs } from "./sqlConstructs";
+import { findMissingConstructs, findUsedConstructs } from "./sqlConstructs";
 
 export type LessonGradingResult =
   | {
@@ -17,7 +17,8 @@ export type LessonGradingResult =
 
 /**
  * 実行結果の比較に加えて、課題が教えたい構文（requiredConstructs）を
- * 実際に使っているかを採点する。結果が偶然一致する別解（LIKE を = で代用など）を
+ * 実際に使っているか、禁止構文（forbiddenConstructs）を避けているかを採点する。
+ * 結果が偶然一致する別解（LIKE を = で代用、サブクエリ課題を JOIN で代用など）を
  * 正解にせず、学習目標へ誘導するメッセージを返す。
  */
 export function gradeLessonAttempt(
@@ -26,15 +27,17 @@ export function gradeLessonAttempt(
   actualResult: QueryResult,
 ): LessonGradingResult {
   const comparison = compareQueryResults(lesson.expectedResult, actualResult, lesson.compareMode);
-  const firstMissingConstruct = findMissingConstructs(sql, lesson.requiredConstructs)[0];
+  const constructIssue =
+    findUsedConstructs(sql, lesson.forbiddenConstructs)[0] ??
+    findMissingConstructs(sql, lesson.requiredConstructs)[0];
 
-  if (firstMissingConstruct) {
+  if (constructIssue) {
     return {
       ok: false,
       kind: "construct",
       message: comparison.ok
-        ? `実行結果は期待どおりですが、${firstMissingConstruct.message}`
-        : firstMissingConstruct.message,
+        ? `実行結果は期待どおりですが、${constructIssue.message}`
+        : constructIssue.message,
       rowDiff: comparison.ok ? undefined : comparison.rowDiff,
     };
   }

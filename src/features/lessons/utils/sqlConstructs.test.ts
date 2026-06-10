@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { findMissingConstructs } from "./sqlConstructs";
+import { findMissingConstructs, findUsedConstructs } from "./sqlConstructs";
 
 const likeConstruct = { keyword: "LIKE", message: "LIKE を使いましょう。" };
 const orderByConstruct = { keyword: "ORDER BY", message: "ORDER BY を使いましょう。" };
@@ -62,5 +62,35 @@ describe("findMissingConstructs", () => {
     expect(findMissingConstructs("SELECT id, name FROM customers", [selectStarConstruct])).toEqual([
       selectStarConstruct,
     ]);
+  });
+});
+
+describe("findUsedConstructs", () => {
+  const joinConstruct = { keyword: "JOIN", message: "JOIN は使わずに解きましょう。" };
+
+  it("returns forbidden constructs that appear in the SQL", () => {
+    expect(
+      findUsedConstructs(
+        "SELECT name FROM customers INNER JOIN orders ON orders.customer_id = customers.id",
+        [joinConstruct],
+      ),
+    ).toEqual([joinConstruct]);
+  });
+
+  it("returns nothing when the forbidden construct is absent", () => {
+    expect(
+      findUsedConstructs(
+        "SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders)",
+        [joinConstruct],
+      ),
+    ).toEqual([]);
+  });
+
+  it("ignores forbidden keywords inside strings and comments", () => {
+    expect(
+      findUsedConstructs("-- JOIN しない\nSELECT name FROM customers WHERE name = 'JOIN'", [
+        joinConstruct,
+      ]),
+    ).toEqual([]);
   });
 });

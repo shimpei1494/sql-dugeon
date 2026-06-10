@@ -40,6 +40,7 @@ const lesson: Lesson = {
   compareMode: "unordered",
   allowedStatements: ["select"],
   requiredConstructs: [],
+  forbiddenConstructs: [],
   hints: [],
   solutionSql: "SELECT * FROM customers;",
   explanation: "SELECT 句で列を選びます。",

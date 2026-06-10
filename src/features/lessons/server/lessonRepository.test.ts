@@ -5,7 +5,7 @@ import { compareQueryResults } from "../../sqlite/compareQueryResults";
 import { validateExecutableSql } from "../../sqlite/sqlSafety";
 import { lessonDefinitions } from "../data";
 import { lessonDefinitionSchema } from "../lessonSchemas";
-import { findMissingConstructs } from "../utils/sqlConstructs";
+import { findMissingConstructs, findUsedConstructs } from "../utils/sqlConstructs";
 import { deriveExpectedResult, executeDefinitionSql } from "./deriveExpectedResult";
 import { getChapters, getLessonPayload, getLessonSummaries } from "./lessonRepository";
 
@@ -84,6 +84,21 @@ describe("lessonRepository", () => {
         expect(
           findMissingConstructs(lesson.solutionSql, lesson.requiredConstructs),
           `solutionSql of ${lesson.id} does not use its own required constructs`,
+        ).toEqual([]);
+      }
+    }
+  });
+
+  it("avoids each lesson's own forbidden constructs in its solutionSql", async () => {
+    const payloads = await getAllLessonPayloads();
+
+    for (const payload of payloads) {
+      const lesson = payload?.lesson;
+
+      if (lesson) {
+        expect(
+          findUsedConstructs(lesson.solutionSql, lesson.forbiddenConstructs),
+          `solutionSql of ${lesson.id} uses a forbidden construct`,
         ).toEqual([]);
       }
     }

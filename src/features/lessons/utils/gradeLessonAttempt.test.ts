@@ -37,6 +37,9 @@ const lesson: Lesson = {
   compareMode: "unordered",
   allowedStatements: ["select"],
   requiredConstructs: [{ keyword: "LIKE", message: "この課題では LIKE を使うのが目標です。" }],
+  forbiddenConstructs: [
+    { keyword: "GLOB", message: "この課題では GLOB ではなく LIKE を使うのが目標です。" },
+  ],
   hints: [],
   solutionSql: "SELECT id, name\nFROM customers\nWHERE name LIKE 'Mio%';",
   explanation: "LIKE は前方一致に使えます。",
@@ -86,6 +89,20 @@ describe("gradeLessonAttempt", () => {
     if (!grading.ok) {
       expect(grading.rowDiff).toBeDefined();
     }
+  });
+
+  it("rejects an answer that uses a forbidden construct even when the result matches", () => {
+    const grading = gradeLessonAttempt(
+      lesson,
+      "SELECT id, name FROM customers WHERE name LIKE 'Mio%' OR name GLOB 'zzz*'",
+      lesson.expectedResult,
+    );
+
+    expect(grading).toMatchObject({
+      ok: false,
+      kind: "construct",
+      message: "実行結果は期待どおりですが、この課題では GLOB ではなく LIKE を使うのが目標です。",
+    });
   });
 
   it("reports a result mismatch when the construct is used", () => {
