@@ -5,10 +5,8 @@ import { useEffect } from "react";
 import { markLessonOpened, useCompletedLessons } from "../hooks/useCompletedLessons";
 import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
-import { ExpectedResultPanel } from "./ExpectedResultPanel";
-import { GradingPanel } from "./GradingPanel";
 import { LessonSupportPanel } from "./LessonSupportPanel";
-import { QueryResultPanel } from "./QueryResultPanel";
+import { ResultComparisonPanel } from "./ResultComparisonPanel";
 import { SchemaExplorer } from "./SchemaExplorer";
 import { SqlEditor } from "./SqlEditor";
 
@@ -83,12 +81,10 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
         </Paper>
       </SimpleGrid>
 
-      <ExpectedResultPanel
+      <ResultComparisonPanel
         compareMode={lesson.compareMode}
         expectedResult={lesson.expectedResult}
-      />
-      <QueryResultPanel executionResult={executionResult} />
-      <GradingPanel
+        executionResult={executionResult}
         gradingResult={gradingResult}
         isCompleted={isCompleted}
         nextLesson={nextLesson}

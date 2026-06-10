@@ -49,6 +49,10 @@ body {
   overflow-x: auto;
 }
 
+.diff-row > td {
+  background-color: var(--mantine-color-red-1);
+}
+
 .sql-editor {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
