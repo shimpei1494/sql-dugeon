@@ -14,7 +14,8 @@ function LessonDetailPage() {
 
   return (
     <Container size="xl" py="xl">
-      <LessonWorkspace payload={payload} />
+      {/* Lesson 間を SPA 遷移したときにエディタ・実行結果の状態を確実に初期化する */}
+      <LessonWorkspace key={payload.lesson.id} payload={payload} />
     </Container>
   );
 }

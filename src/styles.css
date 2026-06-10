@@ -53,11 +53,23 @@ body {
   background-color: var(--mantine-color-red-1);
 }
 
-.sql-editor {
+.sql-editor-frame {
+  overflow: hidden;
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: var(--mantine-radius-sm);
+}
+
+.sql-editor-frame .cm-editor {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
+  font-size: 14px;
   line-height: 1.55;
+}
+
+.sql-editor-frame .cm-editor.cm-focused {
+  outline: 2px solid var(--mantine-color-teal-5);
+  outline-offset: -1px;
 }
 
 .solution-code {

@@ -77,6 +77,7 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
               onReset={resetSql}
               onRun={runSql}
               isRunning={isRunning}
+              tables={lesson.schema}
             />
           </Stack>
         </Paper>
