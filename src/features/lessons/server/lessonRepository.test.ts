@@ -22,6 +22,8 @@ describe("lessonRepository", () => {
       "select-basics",
       "filtering",
       "ordering",
+      "aggregation",
+      "join",
     ]);
   });
 
@@ -62,7 +64,7 @@ describe("lessonRepository", () => {
     const payload = await getLessonPayload("order-high-value-orders");
 
     expect(payload?.lesson.expectedResult.rows.map((row) => row["total_amount"])).toEqual([
-      21_500, 12_800, 9_300, 9_000, 7_600, 4_200,
+      21_500, 12_800, 9_300, 9_000, 7_600, 5_000, 4_200,
     ]);
   });
 
