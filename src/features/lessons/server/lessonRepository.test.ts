@@ -26,6 +26,7 @@ describe("lessonRepository", () => {
       "join",
       "expressions",
       "subquery",
+      "cte",
     ]);
   });
 

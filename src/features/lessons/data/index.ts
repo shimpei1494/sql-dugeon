@@ -1,5 +1,6 @@
 import type { Chapter, LessonDefinition } from "../types";
 import { aggregationChapter, aggregationLessons } from "./chapters/aggregation";
+import { cteChapter, cteLessons } from "./chapters/cte";
 import { expressionsChapter, expressionsLessons } from "./chapters/expressions";
 import { filteringChapter, filteringLessons } from "./chapters/filtering";
 import { joinChapter, joinLessons } from "./chapters/join";
@@ -18,6 +19,7 @@ export const chapterDefinitions: Chapter[] = [
   joinChapter,
   expressionsChapter,
   subqueryChapter,
+  cteChapter,
 ];
 
 export const lessonDefinitions: LessonDefinition[] = [
@@ -28,4 +30,5 @@ export const lessonDefinitions: LessonDefinition[] = [
   ...joinLessons,
   ...expressionsLessons,
   ...subqueryLessons,
+  ...cteLessons,
 ];
