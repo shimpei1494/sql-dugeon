@@ -81,6 +81,13 @@ export const filteringLessons: LessonDefinition[] = [
     starterSql: "SELECT id, name\nFROM customers\nWHERE name LIKE ;",
     compareMode: "unordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "LIKE",
+        message:
+          "この課題では LIKE を使って「Mio で始まる」というパターン条件を表すのが目標です。名前を直接 = で指定すると、他のデータでは使えない SQL になってしまいます。",
+      },
+    ],
     hints: ["LIKE では % が任意の文字列に対応します。", "Mio で始まる値は 'Mio%' で表せます。"],
     solutionSql: "SELECT id, name\nFROM customers\nWHERE name LIKE 'Mio%';",
     explanation: "LIKE は部分一致や前方一致の検索に使います。% は 0 文字以上の任意の文字列です。",
@@ -109,6 +116,13 @@ export const filteringLessons: LessonDefinition[] = [
     starterSql: "SELECT name, city\nFROM customers\nWHERE city IN ();",
     compareMode: "unordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "IN",
+        message:
+          "この課題では IN を使って複数の候補をまとめて指定するのが目標です。OR を並べても同じ結果になりますが、IN の方が短く読みやすく書けます。",
+      },
+    ],
     hints: [
       "IN は複数の候補値をカンマ区切りで指定します。",
       "city IN ('Tokyo', 'Osaka') のように書けます。",
@@ -147,6 +161,123 @@ export const filteringLessons: LessonDefinition[] = [
       {
         sql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount > 9000;",
         reason: "ちょうど 9000 円の注文が漏れる（>= と > の違い）",
+      },
+    ],
+  },
+  {
+    id: "filter-tokyo-customers-age-at-least-30",
+    chapterId: "filtering",
+    title: "複数の条件を組み合わせる",
+    difficulty: "beginner",
+    estimatedMinutes: 8,
+    summary: "AND で複数の条件をすべて満たす行を取得します。",
+    tags: ["WHERE", "AND"],
+    task: "customers テーブルから city が Tokyo かつ age が 30 以上の顧客について、name と age を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 条件1 AND 条件2;",
+      description:
+        "AND は両方の条件を満たす行だけを残します。どちらか一方でよい場合は OR を使います。",
+    },
+    schema: [customersTable],
+    starterSql: "SELECT name, age\nFROM customers\nWHERE ;",
+    compareMode: "unordered",
+    allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "AND",
+        message: "この課題では AND で 2 つの条件を組み合わせるのが目標です。",
+      },
+    ],
+    hints: [
+      "条件は city = 'Tokyo' と age >= 30 の 2 つです。",
+      "2 つの条件を AND でつなぐと、両方を満たす行だけが残ります。",
+    ],
+    solutionSql: "SELECT name, age\nFROM customers\nWHERE city = 'Tokyo' AND age >= 30;",
+    explanation:
+      "AND で条件をつなぐと、すべての条件を満たす行だけが結果に残ります。3 つ以上の条件もつなげられます。",
+    counterexamples: [
+      {
+        sql: "SELECT name, age\nFROM customers\nWHERE city = 'Tokyo';",
+        reason: "30 歳未満の東京の顧客まで含まれてしまう",
+      },
+      {
+        sql: "SELECT name, age\nFROM customers\nWHERE age >= 30;",
+        reason: "東京以外の顧客まで含まれてしまう",
+      },
+    ],
+  },
+  {
+    id: "filter-orders-between",
+    chapterId: "filtering",
+    title: "金額の範囲で注文を探す",
+    difficulty: "beginner",
+    estimatedMinutes: 8,
+    summary: "BETWEEN で下限と上限の範囲に入る行を取得します。",
+    tags: ["WHERE", "BETWEEN"],
+    task: "orders テーブルから total_amount が 5000 以上 10000 以下の注文について、id と total_amount を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 列 BETWEEN 下限 AND 上限;",
+      description:
+        "BETWEEN は範囲条件を 1 つの条件で表せます。下限と上限の値そのものも範囲に含まれます（以上・以下）。",
+    },
+    schema: [ordersTable],
+    starterSql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount BETWEEN ;",
+    compareMode: "unordered",
+    allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "BETWEEN",
+        message:
+          ">= と <= を組み合わせても書けますが、この課題では BETWEEN で範囲を 1 つの条件として表すのが目標です。",
+      },
+    ],
+    hints: [
+      "BETWEEN 5000 AND 10000 のように下限と上限を指定します。",
+      "BETWEEN は両端の値（5000 と 10000）を含みます。",
+    ],
+    solutionSql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount BETWEEN 5000 AND 10000;",
+    explanation:
+      "BETWEEN a AND b は「a 以上 b 以下」を表します。両端の値を含む点に注意してください。",
+    counterexamples: [
+      {
+        sql: "SELECT id, total_amount\nFROM orders\nWHERE total_amount > 5000 AND total_amount < 10000;",
+        reason: "ちょうど 5000 円の注文が漏れる（BETWEEN は両端を含む）",
+      },
+    ],
+  },
+  {
+    id: "filter-orders-not-delivered",
+    chapterId: "filtering",
+    title: "未配達の注文を探す",
+    difficulty: "beginner",
+    estimatedMinutes: 8,
+    summary: "IS NULL で値が入っていない行を取得します。",
+    tags: ["WHERE", "IS NULL"],
+    task: "orders テーブルから delivered_at が NULL（未配達）の注文について、id と ordered_at を取得してください。",
+    learningPoint: {
+      syntax: "SELECT 列\nFROM テーブル名\nWHERE 列 IS NULL;",
+      description:
+        "NULL は「値が無い」ことを表す特別な状態です。= NULL では判定できないため、IS NULL を使います。",
+    },
+    schema: [ordersTable],
+    starterSql: "SELECT id, ordered_at\nFROM orders\nWHERE ;",
+    compareMode: "unordered",
+    allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "IS NULL",
+        message:
+          "この課題では IS NULL で「値が無い」状態を判定するのが目標です。= NULL は常に偽になり、正しく判定できません。",
+      },
+    ],
+    hints: ["NULL の判定には = ではなく IS NULL を使います。", "delivered_at IS NULL と書きます。"],
+    solutionSql: "SELECT id, ordered_at\nFROM orders\nWHERE delivered_at IS NULL;",
+    explanation:
+      "NULL との比較に = を使うと結果は常に不明（偽扱い）になります。値が無いことは IS NULL、有ることは IS NOT NULL で判定します。",
+    counterexamples: [
+      {
+        sql: "SELECT id, ordered_at\nFROM orders\nWHERE delivered_at = NULL;",
+        reason: "= NULL は常に偽になり 1 行も返らない（SQL の代表的な落とし穴）",
       },
     ],
   },

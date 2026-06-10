@@ -27,6 +27,12 @@ export const orderingLessons: LessonDefinition[] = [
     starterSql: "SELECT *\nFROM orders\nORDER BY ;",
     compareMode: "ordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "ORDER BY",
+        message: "この課題では ORDER BY で並び順を明示的に指定するのが目標です。",
+      },
+    ],
     hints: [
       "ORDER BY total_amount で注文金額を基準に並べます。",
       "DESC を付けると大きい値から小さい値の順になります。",
@@ -58,6 +64,16 @@ export const orderingLessons: LessonDefinition[] = [
     starterSql: "SELECT id, ordered_at\nFROM orders\nORDER BY \nLIMIT ;",
     compareMode: "ordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "ORDER BY",
+        message: "この課題では ORDER BY で並び順を明示的に指定するのが目標です。",
+      },
+      {
+        keyword: "LIMIT",
+        message: "この課題では LIMIT で取得件数を制限するのが目標です。",
+      },
+    ],
     hints: [
       "新しい日付を先に出すには ordered_at DESC を使います。",
       "先頭 3 件だけにするには LIMIT 3 を付けます。",
@@ -83,6 +99,16 @@ export const orderingLessons: LessonDefinition[] = [
     starterSql: "SELECT id, total_amount\nFROM orders\nORDER BY \nLIMIT ;",
     compareMode: "ordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "ORDER BY",
+        message: "この課題では ORDER BY で並び順を明示的に指定するのが目標です。",
+      },
+      {
+        keyword: "LIMIT",
+        message: "この課題では LIMIT で取得件数を制限するのが目標です。",
+      },
+    ],
     hints: [
       "低い順は ORDER BY total_amount ASC です。",
       "ASC は省略できますが、明示すると意図が伝わりやすくなります。",
@@ -109,6 +135,12 @@ export const orderingLessons: LessonDefinition[] = [
     starterSql: "SELECT id, name\nFROM customers\nORDER BY ;",
     compareMode: "ordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "ORDER BY",
+        message: "この課題では ORDER BY で並び順を明示的に指定するのが目標です。",
+      },
+    ],
     hints: [
       "文字列の列も ORDER BY の対象にできます。",
       "降順にするには ORDER BY name DESC と書きます。",

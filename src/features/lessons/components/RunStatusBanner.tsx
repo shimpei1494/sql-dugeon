@@ -1,13 +1,13 @@
 import { Alert, Button, Group, Stack, Text } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
-import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import type { LessonSummary } from "../types";
+import type { LessonGradingResult } from "../utils/gradeLessonAttempt";
 
 type RunStatusBannerProps = {
   executionResult?: SqlExecutionResult;
-  gradingResult?: QueryResultComparison;
+  gradingResult?: LessonGradingResult;
   nextLesson?: LessonSummary;
   onShowDetails: () => void;
 };
@@ -55,13 +55,25 @@ export function RunStatusBanner({
   }
 
   if (gradingResult) {
+    const isConstructIssue = gradingResult.kind === "construct";
+
     return (
-      <Alert color="orange" title="まだ正解ではありません">
+      <Alert
+        color={isConstructIssue ? "yellow" : "orange"}
+        title={isConstructIssue ? "構文を確認しましょう" : "まだ正解ではありません"}
+      >
         <Stack gap={6} align="flex-start">
           <Text size="sm">{gradingResult.message}</Text>
-          <Button size="xs" variant="light" color="orange" onClick={onShowDetails}>
-            下の表で差分を確認 ↓
-          </Button>
+          {gradingResult.rowDiff ? (
+            <Button
+              size="xs"
+              variant="light"
+              color={isConstructIssue ? "yellow" : "orange"}
+              onClick={onShowDetails}
+            >
+              下の表で差分を確認 ↓
+            </Button>
+          ) : null}
         </Stack>
       </Alert>
     );

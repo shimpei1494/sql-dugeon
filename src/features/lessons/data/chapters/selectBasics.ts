@@ -27,6 +27,13 @@ export const selectBasicsLessons: LessonDefinition[] = [
     starterSql: "SELECT *\nFROM customers;",
     compareMode: "unordered",
     allowedStatements: ["select"],
+    requiredConstructs: [
+      {
+        keyword: "SELECT *",
+        message:
+          "この課題では SELECT * で「すべての列」を取得するのが目標です。列名をすべて並べても同じ結果になりますが、* を使ってみましょう。",
+      },
+    ],
     hints: [
       "SELECT * はすべての列を取得します。",
       "FROM customers で取得元のテーブルを指定します。",

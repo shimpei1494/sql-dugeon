@@ -89,6 +89,8 @@ export async function getLessonSummaries(): Promise<LessonSummary[]> {
       expectedResult: _expectedResult,
       compareMode: _compareMode,
       allowedStatements: _allowedStatements,
+      requiredConstructs: _requiredConstructs,
+      forbiddenConstructs: _forbiddenConstructs,
       hints: _hints,
       solutionSql: _solutionSql,
       explanation: _explanation,

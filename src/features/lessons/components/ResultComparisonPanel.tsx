@@ -1,16 +1,16 @@
 import { Alert, Badge, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
-import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import type { Lesson, LessonSummary } from "../types";
+import type { LessonGradingResult } from "../utils/gradeLessonAttempt";
 import { DataTable } from "./DataTable";
 
 type ResultComparisonPanelProps = {
   compareMode: Lesson["compareMode"];
   expectedResult: Lesson["expectedResult"];
   executionResult?: SqlExecutionResult;
-  gradingResult?: QueryResultComparison;
+  gradingResult?: LessonGradingResult;
   isCompleted: boolean;
   nextLesson?: LessonSummary;
 };
@@ -38,12 +38,21 @@ function GradingStatus({
   }
 
   if (gradingResult) {
-    return gradingResult.ok ? (
-      <Alert color="teal" title="正解です">
-        Lesson の完了状態を保存しました。
-      </Alert>
-    ) : (
-      <Alert color="orange" title="まだ正解ではありません">
+    if (gradingResult.ok) {
+      return (
+        <Alert color="teal" title="正解です">
+          Lesson の完了状態を保存しました。
+        </Alert>
+      );
+    }
+
+    const isConstructIssue = gradingResult.kind === "construct";
+
+    return (
+      <Alert
+        color={isConstructIssue ? "yellow" : "orange"}
+        title={isConstructIssue ? "構文を確認しましょう" : "まだ正解ではありません"}
+      >
         <Stack gap={4}>
           <Text size="sm">{gradingResult.message}</Text>
           {gradingResult.rowDiff ? (

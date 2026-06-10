@@ -39,6 +39,8 @@ const lesson: Lesson = {
   },
   compareMode: "unordered",
   allowedStatements: ["select"],
+  requiredConstructs: [],
+  forbiddenConstructs: [],
   hints: [],
   solutionSql: "SELECT * FROM customers;",
   explanation: "SELECT 句で列を選びます。",
@@ -86,7 +88,7 @@ describe("buildAiQuestionContext", () => {
         ok: true,
         result: { columns: ["id"], rows: [{ id: 1 }, { id: 2 }] },
       },
-      gradingResult: { ok: false, message: "列数が違います。" },
+      gradingResult: { ok: false, kind: "result", message: "列数が違います。" },
     });
 
     expect(context).toContain("まだ正解ではありません");

@@ -5,6 +5,7 @@ import { compareQueryResults } from "../../sqlite/compareQueryResults";
 import { validateExecutableSql } from "../../sqlite/sqlSafety";
 import { lessonDefinitions } from "../data";
 import { lessonDefinitionSchema } from "../lessonSchemas";
+import { findMissingConstructs, findUsedConstructs } from "../utils/sqlConstructs";
 import { deriveExpectedResult, executeDefinitionSql } from "./deriveExpectedResult";
 import { getChapters, getLessonPayload, getLessonSummaries } from "./lessonRepository";
 
@@ -21,6 +22,13 @@ describe("lessonRepository", () => {
       "select-basics",
       "filtering",
       "ordering",
+      "aggregation",
+      "join",
+      "expressions",
+      "subquery",
+      "cte",
+      "window-functions",
+      "set-operations",
     ]);
   });
 
@@ -61,7 +69,7 @@ describe("lessonRepository", () => {
     const payload = await getLessonPayload("order-high-value-orders");
 
     expect(payload?.lesson.expectedResult.rows.map((row) => row["total_amount"])).toEqual([
-      21_500, 12_800, 9_300, 9_000, 7_600, 4_200,
+      21_500, 12_800, 9_300, 9_000, 7_600, 5_000, 4_200,
     ]);
   });
 
@@ -69,6 +77,36 @@ describe("lessonRepository", () => {
     const payload = await getLessonPayload("select-customer-contact");
 
     expect(payload?.lesson.expectedResult.columns).toEqual(["name", "email"]);
+  });
+
+  it("satisfies each lesson's own required constructs with its solutionSql", async () => {
+    const payloads = await getAllLessonPayloads();
+
+    for (const payload of payloads) {
+      const lesson = payload?.lesson;
+
+      if (lesson) {
+        expect(
+          findMissingConstructs(lesson.solutionSql, lesson.requiredConstructs),
+          `solutionSql of ${lesson.id} does not use its own required constructs`,
+        ).toEqual([]);
+      }
+    }
+  });
+
+  it("avoids each lesson's own forbidden constructs in its solutionSql", async () => {
+    const payloads = await getAllLessonPayloads();
+
+    for (const payload of payloads) {
+      const lesson = payload?.lesson;
+
+      if (lesson) {
+        expect(
+          findUsedConstructs(lesson.solutionSql, lesson.forbiddenConstructs),
+          `solutionSql of ${lesson.id} uses a forbidden construct`,
+        ).toEqual([]);
+      }
+    }
   });
 
   it("does not include counterexamples in the client payload", async () => {

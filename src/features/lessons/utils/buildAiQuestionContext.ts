@@ -1,7 +1,7 @@
-import type { QueryResultComparison } from "../../sqlite/compareQueryResults";
 import type { SqlExecutionResult } from "../../sqlite/sqliteTypes";
 import { buildTableDdl } from "../../sqlite/tableDdl";
 import type { Lesson, QueryResult, SqlValue, TableDefinition } from "../types";
+import type { LessonGradingResult } from "./gradeLessonAttempt";
 
 export type AiQuestionPurpose = "hint" | "error" | "syntax";
 
@@ -55,7 +55,7 @@ function formatSchemaSection(tables: TableDefinition[]): string {
 
 function formatResultSection(
   executionResult: SqlExecutionResult | undefined,
-  gradingResult: QueryResultComparison | undefined,
+  gradingResult: LessonGradingResult | undefined,
 ): string {
   if (!executionResult) {
     return "まだ SQL を実行していません。";
@@ -86,7 +86,7 @@ type AiQuestionContextInput = {
   purpose: AiQuestionPurpose;
   sql: string;
   executionResult?: SqlExecutionResult;
-  gradingResult?: QueryResultComparison;
+  gradingResult?: LessonGradingResult;
 };
 
 export function buildAiQuestionContext({
