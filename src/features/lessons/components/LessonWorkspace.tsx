@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { markLessonOpened, useCompletedLessons } from "../hooks/useCompletedLessons";
 import { useLessonSqlRunner } from "../hooks/useLessonSqlRunner";
 import type { LessonPayload } from "../types";
+import { AiQuestionPanel } from "./AiQuestionPanel";
 import { LessonSupportPanel } from "./LessonSupportPanel";
 import { ResultComparisonPanel } from "./ResultComparisonPanel";
 import { SchemaExplorer } from "./SchemaExplorer";
@@ -96,6 +97,13 @@ export function LessonWorkspace({ payload }: LessonWorkspaceProps) {
         hints={lesson.hints}
         isReviewAvailable={isCompleted || gradingResult?.ok === true}
         solutionSql={lesson.solutionSql}
+      />
+
+      <AiQuestionPanel
+        lesson={lesson}
+        sql={sql}
+        executionResult={executionResult}
+        gradingResult={gradingResult}
       />
     </Stack>
   );

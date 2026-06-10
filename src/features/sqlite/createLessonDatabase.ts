@@ -2,6 +2,7 @@ import initSqlJs from "sql.js";
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 
 import type { Lesson, SqlValue, TableDefinition } from "../lessons/types";
+import { buildTableDdl, quoteIdentifier } from "./tableDdl";
 
 type SqlJsDatabase = initSqlJs.Database;
 type SqlJsValue = initSqlJs.SqlValue;
@@ -16,25 +17,12 @@ function getSqlJs() {
   return sqlJsPromise;
 }
 
-function quoteIdentifier(identifier: string): string {
-  return `"${identifier.replaceAll('"', '""')}"`;
-}
-
 function toSqlJsValue(value: SqlValue): SqlJsValue {
   if (typeof value === "boolean") {
     return value ? 1 : 0;
   }
 
   return value;
-}
-
-function createTableSql(table: TableDefinition): string {
-  const columns = table.columns.map((column) => {
-    const nullable = column.nullable === false ? " NOT NULL" : "";
-    return `${quoteIdentifier(column.name)} ${column.type}${nullable}`;
-  });
-
-  return `CREATE TABLE ${quoteIdentifier(table.name)} (${columns.join(", ")});`;
 }
 
 function insertRows(db: SqlJsDatabase, table: TableDefinition) {
@@ -59,7 +47,7 @@ export async function createLessonDatabase(lesson: Lesson): Promise<SqlJsDatabas
   const db = new SQL.Database();
 
   for (const table of lesson.schema) {
-    db.run(createTableSql(table));
+    db.run(buildTableDdl(table));
     insertRows(db, table);
   }
 

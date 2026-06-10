@@ -66,3 +66,13 @@ body {
     monospace;
   line-height: 1.55;
 }
+
+.ai-question-context {
+  max-height: 320px;
+  overflow-y: auto;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
