@@ -27,6 +27,7 @@ describe("lessonRepository", () => {
       "expressions",
       "subquery",
       "cte",
+      "window-functions",
     ]);
   });
 

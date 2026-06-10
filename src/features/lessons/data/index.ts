@@ -7,6 +7,7 @@ import { joinChapter, joinLessons } from "./chapters/join";
 import { orderingChapter, orderingLessons } from "./chapters/ordering";
 import { selectBasicsChapter, selectBasicsLessons } from "./chapters/selectBasics";
 import { subqueryChapter, subqueryLessons } from "./chapters/subquery";
+import { windowFunctionsChapter, windowFunctionsLessons } from "./chapters/windowFunctions";
 
 /** 教材データを更新したら、localStorage の古い進捗と区別するためにバージョンを上げる。 */
 export const seedVersion = "2026-06-10.4";
@@ -20,6 +21,7 @@ export const chapterDefinitions: Chapter[] = [
   expressionsChapter,
   subqueryChapter,
   cteChapter,
+  windowFunctionsChapter,
 ];
 
 export const lessonDefinitions: LessonDefinition[] = [
@@ -31,4 +33,5 @@ export const lessonDefinitions: LessonDefinition[] = [
   ...expressionsLessons,
   ...subqueryLessons,
   ...cteLessons,
+  ...windowFunctionsLessons,
 ];
